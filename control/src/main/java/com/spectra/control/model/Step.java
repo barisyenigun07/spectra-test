@@ -1,6 +1,7 @@
 package com.spectra.control.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,13 +11,23 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Step {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private String index;
+    @Column(name = "order_index")
+    private int orderIndex;
+    @Column(name = "action")
+    private String action;
+    @Column(name = "input_value")
+    private String inputValue;
+    @Column(name = "status")
     private String status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
     private Job job;
+    @Embedded
+    private Locator locator;
 }

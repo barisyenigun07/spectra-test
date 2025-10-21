@@ -39,3 +39,5 @@ build/
 
 ui/node_modules
 ui/.next
+
+.env

@@ -1,6 +1,6 @@
 package com.spectra.control.controller;
 
-import com.spectra.control.model.Job;
+import com.spectra.commons.dto.JobCreateRequest;
 import com.spectra.control.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class JobController {
     private final JobService jobService;
 
     @PostMapping
-    public void createJob(@RequestBody Job job) {
-        jobService.createJob(job);
+    public void createJob(@RequestBody JobCreateRequest req) {
+        jobService.createJob(req);
     }
 }
