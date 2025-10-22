@@ -24,8 +24,8 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "type")
-    private String type;
+    @Column(name = "target_platform")
+    private String targetPlatform;
     @Column(name = "status")
     private String status;
     @CreatedDate

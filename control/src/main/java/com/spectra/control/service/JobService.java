@@ -23,7 +23,7 @@ public class JobService {
 
     public void createJob(JobCreateRequest req) {
         Job job = new Job();
-        job.setType(req.target());
+        job.setTargetPlatform(req.targetPlatform());
         job.setStatus("QUEUED");
 
         List<Step> steps = new ArrayList<>();
@@ -41,7 +41,7 @@ public class JobService {
         job.setSteps(steps);
         job = jobRepository.save(job);
 
-        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.target(), req.steps());
+        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), req.steps());
         jobPublisher.send(evt);
     }
 }
