@@ -11,6 +11,6 @@ import lombok.*;
 public class Locator {
     @Column(name = "locator_type")
     private String type;
-    @Column(name = "value")
+    @Column(name = "locator_value")
     private String value;
 }
