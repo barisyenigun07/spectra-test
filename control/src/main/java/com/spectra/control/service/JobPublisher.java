@@ -13,7 +13,7 @@ public class JobPublisher {
     private final RabbitTemplate rabbitTemplate;
 
     public void send(JobCreatedEvent evt) {
-        String rk = "job.created." + evt.target() + ".#";
+        String rk = "job.created." + evt.targetPlatform() + ".#";
         rabbitTemplate.convertAndSend(AmqpConfig.JOBS_EX, rk, evt, m -> {
             m.getMessageProperties().setContentType("application/json");
             m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

@@ -7,7 +7,6 @@ import com.spectra.control.model.Job;
 import com.spectra.control.model.Locator;
 import com.spectra.control.model.Step;
 import com.spectra.control.repository.JobRepository;
-import com.spectra.control.repository.StepRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobService {
     private final JobRepository jobRepository;
-    private final StepRepository stepRepository;
     private final JobPublisher jobPublisher;
 
     public void createJob(JobCreateRequest req) {

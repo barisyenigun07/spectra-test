@@ -1,5 +1,6 @@
 package com.spectra.agent.desktop.mq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.spectra.commons.dto.JobCreatedEvent;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,6 +15,6 @@ import java.util.Map;
 public class DesktopJobListener {
     @RabbitListener(queues = "jobs.desktop")
     public void onMessage(JobCreatedEvent evt, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag, @Headers Map<String, Object> headers) {
-
+        ObjectMapper mapper = new ObjectMapper();
     }
 }
