@@ -1,3 +1,4 @@
+import { Client } from "@stomp/stompjs";
 import Image from "next/image";
 
 type User = {
@@ -37,7 +38,6 @@ const users: User[] = [
 export default function Home() {
   return (
     <div>
-      <p>Hello World!</p>
       <div className="flex justify-center px-2 py-5 gap-3">
         {users.map((user) => (
           <div key={user.id} className="bg-amber-500 rounded-2xl shadow-xl w-52 px-2 py-4 m-2 hover:bg-red-700 transition-colors duration-300 ease-in-out">
@@ -69,7 +69,6 @@ export default function Home() {
           <p>Job</p>
         </div>
       </div>
-      
     </div>
   );
 }
