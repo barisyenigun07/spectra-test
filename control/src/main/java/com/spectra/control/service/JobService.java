@@ -2,15 +2,20 @@ package com.spectra.control.service;
 
 import com.spectra.commons.dto.JobCreateRequest;
 import com.spectra.commons.dto.JobCreatedEvent;
+import com.spectra.commons.dto.LocatorDTO;
 import com.spectra.commons.dto.StepDTO;
 import com.spectra.control.model.Job;
 import com.spectra.control.model.Locator;
 import com.spectra.control.model.Step;
 import com.spectra.control.repository.JobRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -19,6 +24,7 @@ public class JobService {
     private final JobRepository jobRepository;
     private final JobPublisher jobPublisher;
 
+    @Transactional
     public void createJob(JobCreateRequest req) {
         Job job = new Job();
         job.setTargetPlatform(req.targetPlatform());
@@ -39,7 +45,22 @@ public class JobService {
         job.setSteps(steps);
         job = jobRepository.save(job);
 
-        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), req.steps());
-        jobPublisher.send(evt);
+        List<StepDTO> orderedSteps = job.getSteps().stream()
+                .sorted(Comparator.comparing(Step::getOrderIndex))
+                .map(st -> new StepDTO(
+                        st.getOrderIndex(),
+                        st.getAction(),
+                        new LocatorDTO(st.getLocator().getType(), st.getLocator().getValue()),
+                        st.getInputValue()
+                )).toList();
+
+        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), orderedSteps);
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                jobPublisher.send(evt);
+            }
+        });
     }
 }

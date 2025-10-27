@@ -17,7 +17,7 @@ services:
       POSTGRES_DB: spectra_test_db
       POSTGRES_USER: spectra
       POSTGRES_PASSWORD: spectra
-    ports: ["5432:5432"]
+    ports: ["5433:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -26,8 +26,15 @@ services:
       timeout: 3s
       retries: 20
     restart: unless-stopped
+  appium:
+    image: appium/appium
+    ports: ["4723:4723"]
   control:
-    build: ./control
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: control
     env_file:
       - .env
     environment:
@@ -48,10 +55,12 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
-  desktop-test-agent:
-    build: ./desktop-test-agent
   web-test-agent:
-    build: ./web-test-agent
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: web-test-agent
     env_file:
       - .env
     environment:
@@ -63,16 +72,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
   mobile-test-agent:
-    build: ./mobile-test-agent
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mobile-test-agent
     env_file:
       - .env
     environment:
       RABBIT_HOST: ${RABBIT_HOST}
       RABBIT_USER: ${RABBIT_USER}
       RABBIT_PASS: ${RABBIT_PASSWORD}
+      APPIUM_URL: ${APPIUM_URL}
     depends_on:
       mq:
         condition: service_healthy
+      appium:
+        condition: service_started
     restart: unless-stopped
 volumes:
   pgdata:
