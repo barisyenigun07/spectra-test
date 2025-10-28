@@ -3,6 +3,7 @@ package com.spectra.control.config.mq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -93,6 +94,13 @@ public class AmqpConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(cf);
         rabbitTemplate.setMessageConverter(mc);
         return rabbitTemplate;
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory cf) {
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(cf);
+        rabbitAdmin.setAutoStartup(true);
+        return rabbitAdmin;
     }
 
 }

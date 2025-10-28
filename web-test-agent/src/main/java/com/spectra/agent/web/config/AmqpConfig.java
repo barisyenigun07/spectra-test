@@ -24,6 +24,8 @@ public class AmqpConfig {
     ) {
         var f = new SimpleRabbitListenerContainerFactory();
         f.setConnectionFactory(cf);
+        f.setMissingQueuesFatal(false);
+        f.setFailedDeclarationRetryInterval(5000L);
         f.setMessageConverter(mc);
         f.setConcurrentConsumers(1);
         f.setMaxConcurrentConsumers(4);
