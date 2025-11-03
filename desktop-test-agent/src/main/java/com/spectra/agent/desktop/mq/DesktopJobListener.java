@@ -14,7 +14,8 @@ import java.util.Map;
 @Component
 public class DesktopJobListener {
     @RabbitListener(queues = "jobs.desktop")
-    public void onMessage(JobCreatedEvent evt, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag, @Headers Map<String, Object> headers) {
-        ObjectMapper mapper = new ObjectMapper();
+    public void onMessage(JobCreatedEvent evt) {
+        System.out.println("Received JobCreatedEvent ID: " + evt.jobId());
+        System.out.println("Received JobCreatedEvent Target: " + evt.targetPlatform());
     }
 }

@@ -38,6 +38,7 @@ public class JobService {
             step.setAction(s.action());
             step.setStatus("PENDING");
             step.setLocator(new Locator(s.locator().type(), s.locator().value()));
+            step.setInputValue(s.inputValue());
             step.setJob(job);
             steps.add(step);
         }
@@ -54,7 +55,7 @@ public class JobService {
                         st.getInputValue()
                 )).toList();
 
-        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), orderedSteps);
+        JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), orderedSteps, req.config());
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
