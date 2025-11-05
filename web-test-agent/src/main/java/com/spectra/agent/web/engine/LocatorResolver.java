@@ -2,9 +2,8 @@ package com.spectra.agent.web.engine;
 
 import com.spectra.commons.dto.LocatorDTO;
 import org.openqa.selenium.By;
-import org.springframework.stereotype.Component;
 
-@Component
+
 public class LocatorResolver {
     public By resolve(LocatorDTO locator) {
         String locatorType = locator.type();

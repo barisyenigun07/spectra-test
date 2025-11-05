@@ -26,6 +26,26 @@ services:
       timeout: 3s
       retries: 20
     restart: unless-stopped
+  selenium-chrome:
+    image: seleniarm/standalone-chromium:latest
+    shm_size: "2g"
+    ports: [ "4445:4444" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:4444/wd/hub/status | grep -q '\"ready\": true'" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+  selenium-firefox:
+    image: seleniarm/standalone-firefox:latest
+    shm_size: "2g"
+    ports: [ "4446:4444" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:4444/wd/hub/status | grep -q '\"ready\": true'" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
   appium:
     image: appium/appium
     ports: ["4723:4723"]
@@ -69,8 +89,14 @@ services:
       RABBIT_USER: ${RABBIT_USER}
       RABBIT_PASS: ${RABBIT_PASSWORD}
       RABBIT_PORT: ${RABBIT_PORT}
+      SELENIUM_URL_CHROME: http://selenium-chrome:4444
+      SELENIUM_URL_FIREFOX: http://selenium-firefox:4444
     depends_on:
       mq:
+        condition: service_healthy
+      selenium-chrome:
+        condition: service_healthy
+      selenium-firefox:
         condition: service_healthy
     restart: unless-stopped
   mobile-test-agent:

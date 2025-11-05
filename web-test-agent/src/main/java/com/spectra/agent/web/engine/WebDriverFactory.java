@@ -1,41 +1,44 @@
 package com.spectra.agent.web.engine;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 public class WebDriverFactory {
     public static WebDriver create(Map<String, String> config) {
         String browser = config.getOrDefault("browser", "chrome").toLowerCase();
-        boolean isHeadless = Boolean.parseBoolean(config.getOrDefault("headless", "false"));
-        String remoteUrl = config.get("remoteUrl");
-
-        return switch (browser) {
-            case "chrome" -> buildChrome();
-            case "firefox" -> buildFirefox();
-            case "edge" -> buildEdge();
-            case "safari" -> buildSafari();
-            default -> throw new IllegalArgumentException("Unsupported browser type");
+        boolean headless = Boolean.parseBoolean(config.getOrDefault("headless", "true"));
+        String remoteUrl = switch (browser) {
+            case "firefox" -> System.getenv("SELENIUM_URL_FIREFOX");
+            default        -> System.getenv("SELENIUM_URL_CHROME");
         };
-    }
 
-    private static WebDriver buildChrome() {
-        return new ChromeDriver();
-    }
-
-    private static WebDriver buildFirefox() {
-        return new FirefoxDriver();
-    }
-
-    private static WebDriver buildEdge() {
-        return new EdgeDriver();
-    }
-
-    private static WebDriver buildSafari() {
-        return new SafariDriver();
+        if (remoteUrl == null || remoteUrl.isBlank()) {
+            throw new IllegalStateException("Selenium URL env not set for " + browser);
+        }
+        try {
+            URL grid = URI.create(remoteUrl).toURL();
+            return switch (browser) {
+                case "chrome" -> {
+                    var opts = new ChromeOptions();
+                    if (headless) opts.addArguments("--headless=new");
+                    opts.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+                    yield new RemoteWebDriver(grid, opts);
+                }
+                case "firefox" -> {
+                    var opts = new FirefoxOptions();
+                    if (headless) opts.addArguments("-headless");
+                    yield new RemoteWebDriver(grid, opts);
+                }
+                default -> throw new IllegalArgumentException("Unsupported browser: " + browser);
+            };
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to init RemoteWebDriver", e);
+        }
     }
 }

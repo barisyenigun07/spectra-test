@@ -1,20 +1,18 @@
 package com.spectra.agent.web.engine.actions;
 
-import com.spectra.agent.web.engine.LocatorResolver;
-import com.spectra.agent.web.engine.model.ExecutionContext;
-import com.spectra.commons.dto.StepDTO;
-import lombok.RequiredArgsConstructor;
-import org.openqa.selenium.By;
+import com.spectra.agent.web.engine.context.ExecutionContext;
+import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+@Component("assertElement")
 public class AssertElementAction implements ActionHandler{
-    private final LocatorResolver locatorResolver;
 
     @Override
-    public void handle(ExecutionContext ctx, StepDTO step) {
-        By by = locatorResolver.resolve(step.locator());
-        ctx.driver().findElement(by);
+    public void handle(ExecutionContext ctx) {
+        WebElement element = ctx.getDriver().findElement(ctx.by());
+
+        if (element.getSize().width == 0 || element.getSize().height == 0) {
+            throw new AssertionError("Element not found!");
+        }
     }
 }

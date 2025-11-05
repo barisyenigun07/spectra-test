@@ -1,22 +1,18 @@
 package com.spectra.agent.web.engine.actions;
 
-import com.spectra.agent.web.engine.LocatorResolver;
-import com.spectra.agent.web.engine.model.ExecutionContext;
+import com.spectra.agent.web.engine.context.ExecutionContext;
 import com.spectra.commons.dto.StepDTO;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.interactions.Actions;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("doubleClick")
 @RequiredArgsConstructor
 public class DoubleClickAction implements ActionHandler {
-    private final LocatorResolver locatorResolver;
 
     @Override
-    public void handle(ExecutionContext ctx, StepDTO step) {
-        By by = locatorResolver.resolve(step.locator());
-        Actions actions = new Actions(ctx.driver());
-        actions.doubleClick(ctx.driver().findElement(by)).perform();
+    public void handle(ExecutionContext ctx) {
+
     }
 }

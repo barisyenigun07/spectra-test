@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 @Component
