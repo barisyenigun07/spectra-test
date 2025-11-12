@@ -3,6 +3,7 @@ package com.spectra.agent.desktop.mq;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
 import com.spectra.commons.dto.JobCreatedEvent;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.mac.options.Mac2Options;
@@ -32,6 +33,7 @@ public class DesktopJobListener {
 
         AppiumDriver driver = new WindowsDriver(URI.create("http://localhost:4723").toURL(), options);
         driver.findElement(By.name("Mesaj Alanı")).sendKeys("Merhaba");
+        driver.findElement(AppiumBy.accessibilityId(""));
 
         Mac2Options mac2Options = new Mac2Options();
         mac2Options.setPlatformName("");

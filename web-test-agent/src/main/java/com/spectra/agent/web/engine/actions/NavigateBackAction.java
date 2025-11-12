@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 public class NavigateBackAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
-        ctx.getDriver().navigate().back();
+        ctx.driver().navigate().back();
     }
 }

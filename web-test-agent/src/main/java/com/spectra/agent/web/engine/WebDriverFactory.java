@@ -1,7 +1,9 @@
 package com.spectra.agent.web.engine;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -13,32 +15,69 @@ public class WebDriverFactory {
     public static WebDriver create(Map<String, String> config) {
         String browser = config.getOrDefault("browser", "chrome").toLowerCase();
         boolean headless = Boolean.parseBoolean(config.getOrDefault("headless", "true"));
-        String remoteUrl = switch (browser) {
+
+        String remoteUrlFromConfig = config.get("remoteUrl");
+        String remoteUrlFromEnv = switch (browser) {
             case "firefox" -> System.getenv("SELENIUM_URL_FIREFOX");
             default        -> System.getenv("SELENIUM_URL_CHROME");
         };
 
-        if (remoteUrl == null || remoteUrl.isBlank()) {
-            throw new IllegalStateException("Selenium URL env not set for " + browser);
-        }
+        String remoteUrl = (remoteUrlFromConfig != null && !remoteUrlFromConfig.isBlank())
+                ? remoteUrlFromConfig
+                : remoteUrlFromEnv;
+
         try {
-            URL grid = URI.create(remoteUrl).toURL();
-            return switch (browser) {
-                case "chrome" -> {
-                    var opts = new ChromeOptions();
-                    if (headless) opts.addArguments("--headless=new");
-                    opts.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-                    yield new RemoteWebDriver(grid, opts);
-                }
-                case "firefox" -> {
-                    var opts = new FirefoxOptions();
-                    if (headless) opts.addArguments("-headless");
-                    yield new RemoteWebDriver(grid, opts);
-                }
-                default -> throw new IllegalArgumentException("Unsupported browser: " + browser);
-            };
+            if (remoteUrl != null && !remoteUrl.isBlank()) {
+                URL grid = URI.create(remoteUrl).toURL();
+                return switch (browser) {
+                    case "chrome" -> buildRemoteChrome(grid, headless);
+                    case "firefox" -> buildRemoteFirefox(grid, headless);
+                    default -> throw new IllegalArgumentException("Unsupported browser: " + browser);
+                };
+            }
+            else {
+                return switch (browser) {
+                    case "chrome" -> buildLocalChrome(headless);
+                    case "firefox" -> buildLocalFirefox(headless);
+                    default -> throw new IllegalArgumentException("Unsupported browser for local: " + browser);
+                };
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to init RemoteWebDriver", e);
         }
+    }
+
+    private static WebDriver buildRemoteChrome(URL grid, boolean headless) {
+        ChromeOptions opts = new ChromeOptions();
+        if (headless) {
+            opts.addArguments("--headless=new");
+        }
+        opts.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        return new RemoteWebDriver(grid, opts);
+    }
+
+    private static WebDriver buildRemoteFirefox(URL grid, boolean headless) {
+        FirefoxOptions opts = new FirefoxOptions();
+        if (headless) {
+            opts.addArguments("-headless");
+        }
+        return new RemoteWebDriver(grid, opts);
+    }
+
+    private static WebDriver buildLocalChrome(boolean headless) {
+        ChromeOptions opts = new ChromeOptions();
+        if (headless) {
+            opts.addArguments("--headless=new");
+        }
+        opts.addArguments("--no-sandbox", "--disable-dev-shm-usage");
+        return new ChromeDriver(opts);
+    }
+
+    private static WebDriver buildLocalFirefox(boolean headless) {
+        FirefoxOptions opts = new FirefoxOptions();
+        if (headless) {
+            opts.addArguments("-headless");
+        }
+        return new FirefoxDriver(opts);
     }
 }
