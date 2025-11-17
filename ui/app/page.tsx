@@ -1,5 +1,10 @@
+"use client";
+
 import { Client } from "@stomp/stompjs";
 import Image from "next/image";
+import "@xyflow/react/dist/style.css";
+import { ReactFlow, Position, useNodesState, type Node } from "@xyflow/react";
+import { BaseNode, BaseNodeContent, BaseNodeHeader, BaseNodeHeaderTitle } from "@/components/base-node";
 
 type User = {
   id: number,
@@ -37,36 +42,35 @@ const users: User[] = [
 
 export default function Home() {
   return (
-    <div>
-      <div className="flex justify-center px-2 py-5 gap-3">
-        {users.map((user) => (
-          <div key={user.id} className="bg-amber-500 rounded-2xl shadow-xl w-52 px-2 py-4 m-2 hover:bg-red-700 transition-colors duration-300 ease-in-out">
-            <p>Name: {user.name}</p>
-            <p>Age: {user.age}</p>
-            <p>Job: {user.job}</p>
-          </div>
-        ))}
-      </div>
-      <div className="flex justify-center px-2 py-5 gap-3">
-        <div className="bg-purple-700 rounded-2xl shadow-xl w-52 px-2 py-4 m-2">
-          <p>Name</p>
-          <p>Age</p>
-          <p>Job</p>
+    <div className="flex flex-col gap-5">
+      <BaseNode>
+        <BaseNodeHeader>
+          <BaseNodeHeaderTitle>Base Node</BaseNodeHeaderTitle>
+        </BaseNodeHeader>
+        <BaseNodeContent>
+          This is a base node compnent.
+        </BaseNodeContent>
+      </BaseNode>
+      <BaseNode>
+        <BaseNodeHeader>
+          <BaseNodeHeaderTitle>Base Node</BaseNodeHeaderTitle>
+        </BaseNodeHeader>
+        <BaseNodeContent>
+          This is a base node compnent.
+        </BaseNodeContent>
+      </BaseNode>
+      <div className="flex justify-center gap-4">
+        <div className="bg-orange-600 rounded-2xl p-2 w-1/3">
+          <h3 className="text-4xl text-white">Box</h3>
+          <p className="text-white">Box paragraph 1</p>
         </div>
-        <div className="bg-purple-700 rounded-2xl shadow-xl w-52 px-2 py-4 m-2">
-          <p>Name</p>
-          <p>Age</p>
-          <p>Job</p>
+        <div className="bg-orange-600 rounded-2xl p-2 w-1/3">
+          <h3 className="text-4xl text-white">Box</h3>
+          <p className="text-white">Box paragraph 1</p>
         </div>
-        <div className="bg-purple-700 rounded-2xl shadow-xl w-52 px-2 py-4 m-2">
-          <p>Name</p>
-          <p>Age</p>
-          <p>Job</p>
-        </div>
-        <div className="bg-purple-700 rounded-2xl shadow-xl w-52 px-2 py-4 m-2">
-          <p>Name</p>
-          <p>Age</p>
-          <p>Job</p>
+        <div className="bg-orange-600 hover:bg-purple-600 transition delay-150 duration-150 ease-in-out rounded-2xl p-2 w-1/3">
+          <h3 className="text-4xl text-white">Box</h3>
+          <p className="text-white">Box paragraph 1</p>
         </div>
       </div>
     </div>
