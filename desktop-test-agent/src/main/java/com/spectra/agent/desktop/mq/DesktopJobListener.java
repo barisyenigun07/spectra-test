@@ -9,6 +9,7 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.mac.options.Mac2Options;
 import io.appium.java_client.windows.WindowsDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -31,7 +32,10 @@ public class DesktopJobListener {
         options.setDeviceName("WindowsPC");
         options.setApp("C:\\Windows\\Desktop\\notepad.exe");
 
+        WindowsDriver wd;
         AppiumDriver driver = new WindowsDriver(URI.create("http://localhost:4723").toURL(), options);
+
+
         driver.findElement(By.name("Mesaj Alanı")).sendKeys("Merhaba");
         driver.findElement(AppiumBy.accessibilityId(""));
 

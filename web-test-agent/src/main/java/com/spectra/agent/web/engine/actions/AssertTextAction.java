@@ -10,12 +10,13 @@ public class AssertTextAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
         WebElement element = ctx.driverWait().until(ExpectedConditions.visibilityOfElementLocated(ctx.by()));
+        String text = (String) ctx.step().params().getOrDefault("text", null);
 
         if (element.getText().isBlank()) {
             throw new AssertionError("Text not found");
         }
 
-        else if (!element.getText().equals(ctx.step().inputValue())) {
+        else if (!element.getText().equals(text)) {
             throw new AssertionError("Texts not matched!");
         }
     }

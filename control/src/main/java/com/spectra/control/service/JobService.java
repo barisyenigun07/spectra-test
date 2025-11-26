@@ -38,7 +38,7 @@ public class JobService {
             step.setAction(s.action());
             step.setStatus("PENDING");
             step.setLocator(new Locator(s.locator().type(), s.locator().value()));
-            step.setInputValue(s.inputValue());
+            step.setParams(s.params());
             step.setJob(job);
             steps.add(step);
         }
@@ -52,7 +52,7 @@ public class JobService {
                         st.getOrderIndex(),
                         st.getAction(),
                         new LocatorDTO(st.getLocator().getType(), st.getLocator().getValue()),
-                        st.getInputValue()
+                        st.getParams()
                 )).toList();
 
         JobCreatedEvent evt = new JobCreatedEvent(job.getId(), req.targetPlatform(), orderedSteps, req.config());

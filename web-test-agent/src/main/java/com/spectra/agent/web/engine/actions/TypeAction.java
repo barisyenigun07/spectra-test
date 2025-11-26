@@ -10,6 +10,6 @@ public class TypeAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
         WebElement el = ctx.driverWait().until(ExpectedConditions.visibilityOfElementLocated(ctx.by()));
-        el.sendKeys(ctx.step().inputValue());
+        el.sendKeys((String) ctx.step().params().get("text"));
     }
 }

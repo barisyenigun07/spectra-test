@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class OpenUrlAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
-        ctx.driver().get(ctx.step().inputValue());
+        String url = (String) ctx.step().params().get("url");
+        ctx.driver().get(url);
     }
 }
