@@ -1,22 +1,19 @@
 package com.spectra.agent.mobile.mq;
 
-import com.spectra.agent.mobile.engine.MobileDriverFactory;
-import com.spectra.agent.mobile.engine.context.ExecutionContext;
+import com.spectra.agent.mobile.engine.JobRunner;
 import com.spectra.commons.dto.JobCreatedEvent;
-import com.spectra.commons.dto.StepDTO;
-import io.appium.java_client.AppiumDriver;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+
 @Component
+@RequiredArgsConstructor
 public class MobileJobListener {
+    private final JobRunner jobRunner;
+
     @RabbitListener(queues = "jobs.mobile")
     public void onMessage(JobCreatedEvent evt) {
-        AppiumDriver driver = MobileDriverFactory.create(evt.config());
-
-        for (StepDTO step : evt.steps()) {
-            var ctx = new ExecutionContext(driver, step);
-
-        }
+        jobRunner.runJob(evt);
     }
 }

@@ -4,8 +4,9 @@ import com.spectra.commons.dto.StepDTO;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-public record ExecutionContext(AppiumDriver driver, StepDTO step) {
+public record ExecutionContext(AppiumDriver driver, StepDTO step, WebDriverWait driverWait) {
     public By by() {
         String locatorType = step.locator().type();
         String locatorValue = step.locator().value();
