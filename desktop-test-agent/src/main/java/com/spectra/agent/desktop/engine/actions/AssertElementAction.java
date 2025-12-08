@@ -9,7 +9,7 @@ public class AssertElementAction implements ActionHandler {
     public void handle(ExecutionContext ctx) {
         boolean isElementVisible = ctx.client().isVisible(ctx.step().locator());
         if (!isElementVisible) {
-            throw new AssertionError("Elemet is not visible!");
+            throw new AssertionError("Element is not visible!");
         }
     }
 }

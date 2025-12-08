@@ -14,12 +14,12 @@ import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "jobs")
+@Table(name = "test_cases")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Job {
+public class TestCase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,6 +34,6 @@ public class Job {
     @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Step> steps;
 }

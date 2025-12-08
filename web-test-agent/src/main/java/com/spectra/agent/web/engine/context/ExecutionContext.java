@@ -1,6 +1,6 @@
 package com.spectra.agent.web.engine.context;
 
-import com.spectra.commons.dto.StepDTO;
+import com.spectra.commons.dto.step.StepDTO;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;

@@ -1,8 +1,8 @@
 package com.spectra.agent.mobile.engine;
 
 import com.spectra.agent.mobile.engine.context.ExecutionContext;
-import com.spectra.commons.dto.JobCreatedEvent;
-import com.spectra.commons.dto.StepDTO;
+import com.spectra.commons.dto.testcase.TestCaseCreatedEvent;
+import com.spectra.commons.dto.step.StepDTO;
 import io.appium.java_client.AppiumDriver;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,10 +12,10 @@ import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
-public class JobRunner {
+public class TestCaseRunner {
     private final StepExecutor stepExecutor;
 
-    public void runJob(JobCreatedEvent evt) {
+    public void runTestCase(TestCaseCreatedEvent evt) {
         AppiumDriver driver = MobileDriverFactory.create(evt.config());
         WebDriverWait driverWait = new WebDriverWait(driver, Duration.ofSeconds(10));
 

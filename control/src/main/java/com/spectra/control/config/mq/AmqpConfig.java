@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AmqpConfig {
-    public static final String JOBS_EX = "jobs.exchange";
+    public static final String TESTCASES_EX = "testcases.exchange";
     public static final String RESULTS_EX = "results.exchange";
-    public static final String DLX = "jobs.dlx";
+    public static final String DLX = "testcases.dlx";
 
     @Bean
-    public TopicExchange jobsExchange() {
-        return new TopicExchange(JOBS_EX, true, false);
+    public TopicExchange testCasesExchange() {
+        return new TopicExchange(TESTCASES_EX, true, false);
     }
 
     @Bean
@@ -32,28 +32,28 @@ public class AmqpConfig {
     }
 
     private Declarables agentQueues(String agent, int retryTtlMs) {
-        String main = "jobs." + agent;
-        String retry = "jobs." + agent + ".retry";
-        String dead = "jobs." + agent + ".dead";
+        String main = "testcases." + agent;
+        String retry = "testcases." + agent + ".retry";
+        String dead = "testcases." + agent + ".dead";
 
         Queue qMain = QueueBuilder.durable(main)
                 .deadLetterExchange(DLX)
-                .deadLetterRoutingKey("job.created." + agent + ".retry")
+                .deadLetterRoutingKey("testcase.created." + agent + ".retry")
                 .build();
 
         Queue qRetry = QueueBuilder.durable(retry)
                 .withArgument("x-message-ttl", retryTtlMs)
-                .deadLetterExchange(JOBS_EX)
-                .deadLetterRoutingKey("job.created." + agent)
+                .deadLetterExchange(TESTCASES_EX)
+                .deadLetterRoutingKey("testcase.created." + agent)
                 .build();
 
         Queue qDead = QueueBuilder.durable(dead).build();
 
         return new Declarables(
                 qMain, qRetry, qDead,
-                BindingBuilder.bind(qMain).to(jobsExchange()).with("job.created." + agent + ".#"),
-                BindingBuilder.bind(qRetry).to(dlx()).with("job.created." + agent + ".retry"),
-                BindingBuilder.bind(qDead).to(dlx()).with("job.created." + agent + ".dead")
+                BindingBuilder.bind(qMain).to(testCasesExchange()).with("testcase.created." + agent + ".#"),
+                BindingBuilder.bind(qRetry).to(dlx()).with("testcase.created." + agent + ".retry"),
+                BindingBuilder.bind(qDead).to(dlx()).with("testcase.created." + agent + ".dead")
         );
     }
 

@@ -1,6 +1,6 @@
 package com.spectra.agent.desktop.engine.client;
 
-import com.spectra.commons.dto.LocatorDTO;
+import com.spectra.commons.dto.locator.LocatorDTO;
 
 public interface DesktopClient {
     void click(LocatorDTO locator);
@@ -9,4 +9,6 @@ public interface DesktopClient {
     void sendShortcut(String shortcut);
     String getText(LocatorDTO locator);
     boolean isVisible(LocatorDTO locator);
+    void mouseMove(LocatorDTO locator);
+    void dragAndDrop(LocatorDTO locator);
 }

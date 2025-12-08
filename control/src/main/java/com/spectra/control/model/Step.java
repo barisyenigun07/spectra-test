@@ -30,8 +30,8 @@ public class Step {
     @Column(name = "status")
     private String status;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id")
-    private Job job;
+    @JoinColumn(name = "test_case_id")
+    private TestCase testCase;
     @Embedded
     private Locator locator;
 }

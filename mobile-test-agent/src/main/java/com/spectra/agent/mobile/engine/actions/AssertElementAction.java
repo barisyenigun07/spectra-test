@@ -14,6 +14,5 @@ public class AssertElementAction implements ActionHandler {
         if (el.getSize().width == 0 || el.getSize().height == 0) {
             throw new AssertionError("");
         }
-
     }
 }

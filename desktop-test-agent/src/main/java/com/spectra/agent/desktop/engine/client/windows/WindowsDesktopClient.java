@@ -1,7 +1,7 @@
 package com.spectra.agent.desktop.engine.client.windows;
 
 import com.spectra.agent.desktop.engine.client.DesktopClient;
-import com.spectra.commons.dto.LocatorDTO;
+import com.spectra.commons.dto.locator.LocatorDTO;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.windows.WindowsDriver;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +47,16 @@ public class WindowsDesktopClient implements DesktopClient {
     public boolean isVisible(LocatorDTO locator) {
         Dimension size = driver.findElement(resolve(locator)).getSize();
         return size.width > 0 && size.height > 0;
+    }
+
+    @Override
+    public void mouseMove(LocatorDTO locator) {
+
+    }
+
+    @Override
+    public void dragAndDrop(LocatorDTO locator) {
+
     }
 
     private By resolve(LocatorDTO locator) {

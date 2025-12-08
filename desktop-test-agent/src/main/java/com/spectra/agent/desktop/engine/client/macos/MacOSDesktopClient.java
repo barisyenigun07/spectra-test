@@ -1,7 +1,7 @@
 package com.spectra.agent.desktop.engine.client.macos;
 
 import com.spectra.agent.desktop.engine.client.DesktopClient;
-import com.spectra.commons.dto.LocatorDTO;
+import com.spectra.commons.dto.locator.LocatorDTO;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.mac.Mac2Driver;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,18 @@ public class MacOSDesktopClient implements DesktopClient {
     public boolean isVisible(LocatorDTO locator) {
         Dimension size = driver.findElement(resolve(locator)).getSize();
         return size.width > 0 && size.height > 0;
+    }
+
+    @Override
+    public void mouseMove(LocatorDTO locator) {
+        new Actions(driver)
+                .moveToElement(driver.findElement(resolve(locator)))
+                .perform();
+    }
+
+    @Override
+    public void dragAndDrop(LocatorDTO locator) {
+
     }
 
     private By resolve(LocatorDTO locator) {
