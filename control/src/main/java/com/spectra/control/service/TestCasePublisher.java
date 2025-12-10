@@ -13,7 +13,7 @@ public class TestCasePublisher {
     private final RabbitTemplate rabbitTemplate;
 
     public void send(TestCaseCreatedEvent evt) {
-        String rk = "job.created." + evt.targetPlatform() + ".#";
+        String rk = "testcase.created." + evt.targetPlatform() + ".#";
         rabbitTemplate.convertAndSend(AmqpConfig.TESTCASES_EX, rk, evt, m -> {
             m.getMessageProperties().setContentType("application/json");
             m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

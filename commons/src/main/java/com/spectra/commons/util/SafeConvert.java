@@ -7,8 +7,7 @@ public final class SafeConvert {
 
     public static String toString(Map<String, Object> map, String key) {
         Object value = map.get(key);
-        if (value == null) return null;
-        return String.valueOf(value);
+        return (value == null) ? null : String.valueOf(value);
     }
 
     public static String toString(Map<String, Object> map, String key, String defaultValue) {
@@ -20,7 +19,11 @@ public final class SafeConvert {
         Object value = map.get(key);
         if (value == null) return null;
         if (value instanceof Number n) return n.intValue();
-        return Integer.parseInt(value.toString());
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Integer toInt(Map<String, Object> map, String key, int defaultValue) {
@@ -32,7 +35,11 @@ public final class SafeConvert {
         Object value = map.get(key);
         if (value == null) return null;
         if (value instanceof Number n) return n.doubleValue();
-        return Double.parseDouble(value.toString());
+        try {
+            return Double.parseDouble(value.toString());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Double toDouble(Map<String, Object> map, String key, double defaultValue) {
@@ -44,7 +51,11 @@ public final class SafeConvert {
         Object value = map.get(key);
         if (value == null) return null;
         if (value instanceof Boolean b) return b;
-        return Boolean.parseBoolean(value.toString());
+        try {
+            return Boolean.parseBoolean(value.toString());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static Boolean toBoolean(Map<String, Object> map, String key, boolean defaultValue) {
