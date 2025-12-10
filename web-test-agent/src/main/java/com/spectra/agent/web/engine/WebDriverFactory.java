@@ -1,5 +1,6 @@
 package com.spectra.agent.web.engine;
 
+import com.spectra.commons.util.SafeConvert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -12,11 +13,11 @@ import java.net.URL;
 import java.util.Map;
 
 public class WebDriverFactory {
-    public static WebDriver create(Map<String, String> config) {
-        String browser = config.getOrDefault("browser", "chrome").toLowerCase();
-        boolean headless = Boolean.parseBoolean(config.getOrDefault("headless", "true"));
+    public static WebDriver create(Map<String, Object> config) {
+        String browser = SafeConvert.toString(config, "browser", "chrome").toLowerCase();
+        Boolean headless = SafeConvert.toBoolean(config, "headless", false);
 
-        String remoteUrlFromConfig = config.get("remoteUrl");
+        String remoteUrlFromConfig = SafeConvert.toString(config, "remoteUrl");
         String remoteUrlFromEnv = switch (browser) {
             case "firefox" -> System.getenv("SELENIUM_URL_FIREFOX");
             default        -> System.getenv("SELENIUM_URL_CHROME");

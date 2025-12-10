@@ -1,6 +1,7 @@
 package com.spectra.agent.mobile.engine.actions;
 
 import com.spectra.agent.mobile.engine.context.ExecutionContext;
+import com.spectra.commons.util.SafeConvert;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.NoSuchElementException;
@@ -20,9 +21,9 @@ public class SwipeUntilVisibleAction implements ActionHandler {
         AppiumDriver driver = ctx.driver();
         Map<String, Object> params = ctx.step().params();
 
-        String direction = (String) params.getOrDefault("direction", "up");
-        int maxSwipes = (Integer) params.getOrDefault("maxSwipes", 6);
-        int distance = (Integer) params.getOrDefault("distance", 500);
+        String direction = SafeConvert.toString(params, "direction", "up");
+        int maxSwipes = SafeConvert.toInt(params, "maxSwipes", 6);
+        int distance = SafeConvert.toInt(params, "distance", 500);
 
         for (int i = 0; i < maxSwipes; i++) {
             try {

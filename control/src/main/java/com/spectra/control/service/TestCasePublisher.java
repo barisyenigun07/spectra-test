@@ -17,7 +17,7 @@ public class TestCasePublisher {
         rabbitTemplate.convertAndSend(AmqpConfig.TESTCASES_EX, rk, evt, m -> {
             m.getMessageProperties().setContentType("application/json");
             m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-            m.getMessageProperties().setCorrelationId(evt.jobId().toString());
+            m.getMessageProperties().setCorrelationId(evt.id().toString());
             return m;
         });
     }

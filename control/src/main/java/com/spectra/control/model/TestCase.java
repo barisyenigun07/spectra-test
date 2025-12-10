@@ -1,5 +1,6 @@
 package com.spectra.control.model;
 
+import com.spectra.control.model.converter.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -36,4 +39,7 @@ public class TestCase {
     private Instant updatedAt;
     @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Step> steps;
+    @Column(name = "config", columnDefinition = "jsonb")
+    @Convert(converter = MapToJsonConverter.class)
+    private Map<String, Object> config;
 }

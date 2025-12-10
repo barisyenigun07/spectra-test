@@ -5,6 +5,7 @@ import com.spectra.agent.desktop.engine.client.DesktopClient;
 import com.spectra.agent.desktop.engine.client.linux.LinuxDesktopClient;
 import com.spectra.agent.desktop.engine.client.macos.MacOSDesktopClient;
 import com.spectra.agent.desktop.engine.client.windows.WindowsDesktopClient;
+import com.spectra.commons.util.SafeConvert;
 import io.appium.java_client.mac.Mac2Driver;
 import io.appium.java_client.mac.options.Mac2Options;
 import io.appium.java_client.windows.WindowsDriver;
@@ -17,8 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DesktopClientFactory {
-    public static DesktopClient create(Map<String, String> config) {
-        String rawOsName = config.getOrDefault("os", System.getProperty("os.name"));
+    public static DesktopClient create(Map<String, Object> config) {
+        String rawOsName = SafeConvert.toString(config, "os", System.getProperty("os.name"));
         String osName = normalizeOsName(rawOsName);
 
         return switch (osName) {
@@ -45,8 +46,8 @@ public class DesktopClientFactory {
         return lower;
     }
 
-    private static MacOSDesktopClient buildMacClient(Map<String, String> config) {
-        String bundleId = config.get("bundleId");
+    private static MacOSDesktopClient buildMacClient(Map<String, Object> config) {
+        String bundleId = SafeConvert.toString(config, "bundleId");
         if (bundleId == null || bundleId.isBlank()) {
             throw new IllegalArgumentException("bundleId is required for macOS desktop client");
         }
@@ -63,14 +64,14 @@ public class DesktopClientFactory {
         return new MacOSDesktopClient(driver);
     }
 
-    private static WindowsDesktopClient buildWindowsClient(Map<String, String> config) {
-        String appId = config.get("appId");
+    private static WindowsDesktopClient buildWindowsClient(Map<String, Object> config) {
+        String appId = SafeConvert.toString(config, "appId");
         if (appId == null || appId.isBlank()) {
             throw new IllegalArgumentException("appId is required for Windows desktop client");
         }
 
         WindowsOptions options = new WindowsOptions()
-                .setApp(config.get("app"));
+                .setApp(SafeConvert.toString(config, "app"));
         options.setCapability("platformName", "Windows");
         options.setCapability("deviceName", "WindowsPC");
         options.setCapability("ms:waitForAppLaunch", 10);
@@ -81,15 +82,15 @@ public class DesktopClientFactory {
         return new WindowsDesktopClient(driver);
     }
 
-    private static LinuxDesktopClient buildLinuxClient(Map<String, String> config) {
-        String windowName = config.getOrDefault("windowName", "*");
+    private static LinuxDesktopClient buildLinuxClient(Map<String, Object> config) {
+        String windowName = SafeConvert.toString(config, "windowName", "*");
         Ldtp ldtp = new Ldtp(windowName);
         return new LinuxDesktopClient(ldtp);
     }
 
-    private static URL buildAppiumUrl(Map<String, String> config, String envVarName) {
+    private static URL buildAppiumUrl(Map<String, Object> config, String envVarName) {
         try {
-            String urlFromConfig = config.get("appiumUrl");
+            String urlFromConfig = SafeConvert.toString(config, "appiumUrl");
             String url = urlFromConfig != null ? urlFromConfig : System.getenv(envVarName);
 
             if (url == null || url.isBlank()) {

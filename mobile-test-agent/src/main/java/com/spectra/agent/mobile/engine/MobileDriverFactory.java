@@ -1,5 +1,6 @@
 package com.spectra.agent.mobile.engine;
 
+import com.spectra.commons.util.SafeConvert;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
@@ -10,11 +11,11 @@ import java.net.URL;
 import java.util.Map;
 
 public class MobileDriverFactory {
-    public static AppiumDriver create(Map<String, String> config) {
-        String platform = config.getOrDefault("platform", "android");
-        String automation = config.getOrDefault("automationName", "UiAutomator2");
-        String device = config.getOrDefault("deviceName", "auto");
-        String udid = config.getOrDefault("udid", "auto");
+    public static AppiumDriver create(Map<String, Object> config) {
+        String platform = SafeConvert.toString(config, "platform", "Android");
+        String automation = SafeConvert.toString(config, "automationName", "UiAutomator2");
+        String device = SafeConvert.toString(config, "deviceName", "auto");
+        String udid = SafeConvert.toString(config, "udid", "auto");
 
         String remoteUrl = System.getenv("APPIUM_URL");
         if (remoteUrl == null) throw new IllegalStateException("APPIUM_URL must be set!");

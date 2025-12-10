@@ -5,6 +5,8 @@ import com.spectra.commons.dto.testcase.TestCaseCreateRequest;
 import com.spectra.commons.dto.testcase.TestCaseCreatedEvent;
 import com.spectra.commons.dto.locator.LocatorDTO;
 import com.spectra.commons.dto.step.StepDTO;
+import com.spectra.commons.dto.testcase.TestCaseDTO;
+import com.spectra.control.mapper.TestCaseMapper;
 import com.spectra.control.model.TestCase;
 import com.spectra.control.model.Locator;
 import com.spectra.control.model.Step;
@@ -23,10 +25,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TestCaseService {
     private final TestCaseRepository testCaseRepository;
+    private final TestCaseMapper testCaseMapper;
     private final TestCasePublisher testCasePublisher;
 
     @Transactional
-    public void createJob(TestCaseCreateRequest req) {
+    public void createTestCase(TestCaseCreateRequest req) {
         TestCase testCase = new TestCase();
         testCase.setTargetPlatform(req.targetPlatform());
         testCase.setStatus("QUEUED");
@@ -45,6 +48,7 @@ public class TestCaseService {
         }
 
         testCase.setSteps(steps);
+        testCase.setConfig(req.config());
         testCase = testCaseRepository.save(testCase);
 
         List<StepDTO> orderedSteps = testCase.getSteps().stream()
@@ -57,7 +61,7 @@ public class TestCaseService {
                         st.getParams()
                 )).toList();
 
-        TestCaseCreatedEvent evt = new TestCaseCreatedEvent(testCase.getId(), req.targetPlatform(), orderedSteps, req.config());
+        TestCaseCreatedEvent evt = new TestCaseCreatedEvent(testCase.getId(), testCase.getTargetPlatform(), orderedSteps, testCase.getConfig());
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -65,5 +69,15 @@ public class TestCaseService {
                 testCasePublisher.send(evt);
             }
         });
+    }
+
+    public TestCaseDTO getTestCase(Long id) {
+        TestCase testCase = testCaseRepository.findById(id).orElseThrow(() -> new RuntimeException(""));
+        return testCaseMapper.toDto(testCase);
+    }
+
+    public void deleteTestCase(Long id) {
+        TestCase testCase = testCaseRepository.findById(id).orElseThrow(() -> new RuntimeException(""));
+        testCaseRepository.delete(testCase);
     }
 }

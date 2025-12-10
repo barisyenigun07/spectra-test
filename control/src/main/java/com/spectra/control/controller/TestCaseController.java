@@ -1,12 +1,10 @@
 package com.spectra.control.controller;
 
 import com.spectra.commons.dto.testcase.TestCaseCreateRequest;
+import com.spectra.commons.dto.testcase.TestCaseDTO;
 import com.spectra.control.service.TestCaseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/testcases")
@@ -15,7 +13,17 @@ public class TestCaseController {
     private final TestCaseService testCaseService;
 
     @PostMapping
-    public void createJob(@RequestBody TestCaseCreateRequest req) {
-        testCaseService.createJob(req);
+    public void createTestCase(@RequestBody TestCaseCreateRequest req) {
+        testCaseService.createTestCase(req);
+    }
+
+    @GetMapping("/{id}")
+    public TestCaseDTO getTestCase(@PathVariable("id") Long id) {
+        return testCaseService.getTestCase(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTestCase(@PathVariable("id") Long id) {
+        testCaseService.deleteTestCase(id);
     }
 }

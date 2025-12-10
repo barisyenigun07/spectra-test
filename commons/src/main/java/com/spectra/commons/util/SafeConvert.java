@@ -11,11 +11,21 @@ public final class SafeConvert {
         return String.valueOf(value);
     }
 
+    public static String toString(Map<String, Object> map, String key, String defaultValue) {
+        String result = toString(map, key);
+        return (result == null) ? defaultValue : result;
+    }
+
     public static Integer toInt(Map<String, Object> map, String key) {
         Object value = map.get(key);
         if (value == null) return null;
         if (value instanceof Number n) return n.intValue();
         return Integer.parseInt(value.toString());
+    }
+
+    public static Integer toInt(Map<String, Object> map, String key, int defaultValue) {
+        Integer result = toInt(map, key);
+        return (result == null) ? defaultValue : result;
     }
 
     public static Double toDouble(Map<String, Object> map, String key) {
@@ -25,10 +35,20 @@ public final class SafeConvert {
         return Double.parseDouble(value.toString());
     }
 
+    public static Double toDouble(Map<String, Object> map, String key, double defaultValue) {
+        Double result = toDouble(map, key);
+        return (result == null) ? defaultValue : result;
+    }
+
     public static Boolean toBoolean(Map<String, Object> map, String key) {
         Object value = map.get(key);
         if (value == null) return null;
         if (value instanceof Boolean b) return b;
         return Boolean.parseBoolean(value.toString());
+    }
+
+    public static Boolean toBoolean(Map<String, Object> map, String key, boolean defaultValue) {
+        Boolean result = toBoolean(map, key);
+        return (result == null) ? defaultValue : result;
     }
 }
