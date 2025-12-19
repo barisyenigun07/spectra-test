@@ -17,6 +17,11 @@ public class TestCaseController {
         testCaseService.createTestCase(req);
     }
 
+    @PostMapping("/{id}/run")
+    public void runTestCase(@PathVariable("id") Long id) {
+        testCaseService.runTestCase(id);
+    }
+
     @GetMapping("/{id}")
     public TestCaseDTO getTestCase(@PathVariable("id") Long id) {
         return testCaseService.getTestCase(id);

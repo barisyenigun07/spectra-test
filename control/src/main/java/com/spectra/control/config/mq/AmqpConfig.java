@@ -38,22 +38,22 @@ public class AmqpConfig {
 
         Queue qMain = QueueBuilder.durable(main)
                 .deadLetterExchange(DLX)
-                .deadLetterRoutingKey("testcase.created." + agent + ".retry")
+                .deadLetterRoutingKey("testcase.run.requested." + agent + ".retry")
                 .build();
 
         Queue qRetry = QueueBuilder.durable(retry)
                 .withArgument("x-message-ttl", retryTtlMs)
                 .deadLetterExchange(TESTCASES_EX)
-                .deadLetterRoutingKey("testcase.created." + agent)
+                .deadLetterRoutingKey("testcase.run.requested." + agent)
                 .build();
 
         Queue qDead = QueueBuilder.durable(dead).build();
 
         return new Declarables(
                 qMain, qRetry, qDead,
-                BindingBuilder.bind(qMain).to(testCasesExchange()).with("testcase.created." + agent + ".#"),
-                BindingBuilder.bind(qRetry).to(dlx()).with("testcase.created." + agent + ".retry"),
-                BindingBuilder.bind(qDead).to(dlx()).with("testcase.created." + agent + ".dead")
+                BindingBuilder.bind(qMain).to(testCasesExchange()).with("testcase.run.requested." + agent + ".#"),
+                BindingBuilder.bind(qRetry).to(dlx()).with("testcase.run.requested." + agent + ".retry"),
+                BindingBuilder.bind(qDead).to(dlx()).with("testcase.run.requested." + agent + ".dead")
         );
     }
 
@@ -73,14 +73,14 @@ public class AmqpConfig {
     }
 
     @Bean
-    public Queue resultsControl() {
-        return QueueBuilder.durable("results.control").build();
+    public Queue testCaseResults() {
+        return QueueBuilder.durable("testcase.results").build();
     }
 
     @Bean
     public Declarables resultBindings() {
         return new Declarables(
-                BindingBuilder.bind(resultsControl()).to(resultsExchange()).with("#")
+                BindingBuilder.bind(testCaseResults()).to(resultsExchange()).with("testcase.result.completed.#")
         );
     }
 

@@ -5,8 +5,9 @@ import com.spectra.commons.dto.locator.LocatorDTO;
 import java.util.Map;
 
 public record StepDTO(
-        Long id,
+        Long stepId,
         int orderIndex,
+        StepStatus status,
         String action,
         LocatorDTO locator,
         Map<String, Object> params

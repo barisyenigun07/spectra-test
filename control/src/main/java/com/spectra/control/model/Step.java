@@ -1,5 +1,6 @@
 package com.spectra.control.model;
 
+import com.spectra.commons.dto.step.StepStatus;
 import com.spectra.control.model.converter.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,9 @@ public class Step {
     @Column(name = "params", columnDefinition = "jsonb")
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, Object> params;
-    @Column(name = "status")
-    private String status;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private StepStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_case_id")
     private TestCase testCase;

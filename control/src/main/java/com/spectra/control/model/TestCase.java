@@ -1,5 +1,6 @@
 package com.spectra.control.model;
 
+import com.spectra.commons.dto.testcase.TestCaseStatus;
 import com.spectra.control.model.converter.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -29,8 +29,9 @@ public class TestCase {
     private Long id;
     @Column(name = "target_platform")
     private String targetPlatform;
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private TestCaseStatus status;
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

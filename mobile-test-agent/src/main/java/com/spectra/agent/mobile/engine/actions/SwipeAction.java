@@ -1,6 +1,7 @@
 package com.spectra.agent.mobile.engine.actions;
 
 import com.spectra.agent.mobile.engine.context.ExecutionContext;
+import com.spectra.commons.util.SafeConvert;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,8 @@ public class SwipeAction implements ActionHandler {
     public void handle(ExecutionContext ctx) {
         Map<String, Object> params = ctx.step().params();
 
-        String direction = (String) params.getOrDefault("direction", "up");
-        int distance = (Integer) params.getOrDefault("distance", 500);
+        String direction = SafeConvert.toString(params, "direction", "up");
+        int distance = SafeConvert.toInt(params, "distance", 500);
 
         int startX = ctx.driver().manage().window().getSize().width / 2;
         int startY = ctx.driver().manage().window().getSize().height / 2;

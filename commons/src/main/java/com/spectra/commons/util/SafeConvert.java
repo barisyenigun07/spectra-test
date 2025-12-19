@@ -1,5 +1,7 @@
 package com.spectra.commons.util;
 
+import com.spectra.commons.dto.locator.LocatorDTO;
+
 import java.util.Map;
 
 public final class SafeConvert {
@@ -61,5 +63,41 @@ public final class SafeConvert {
     public static Boolean toBoolean(Map<String, Object> map, String key, boolean defaultValue) {
         Boolean result = toBoolean(map, key);
         return (result == null) ? defaultValue : result;
+    }
+
+    public static LocatorDTO toLocator(Map<String, Object> map, String key, String defaultType) {
+        Object data = map.get(key);
+        if (data == null) return null;
+
+        if (data instanceof LocatorDTO dto) {
+            String value = normalizeString(dto.value());
+            if (value == null) return null;
+            String type = normalizeString(dto.type());
+            return new LocatorDTO(type != null ? type : defaultType, value);
+        }
+
+        if (data instanceof Map<?,?> raw) {
+            Object valueObj = raw.get("value");
+            String value = normalizeString(valueObj);
+            if (value == null) return null;
+            Object typeObj = raw.get("type");
+            String type = normalizeString(typeObj);
+            return new LocatorDTO(type != null ? type : defaultType, value);
+        }
+
+        throw new IllegalArgumentException(
+                "Invalid locator format for key='" + key + "'. Expected LocatorDTO or Map{type, value} but got: " +
+                        data.getClass().getName()
+        );
+    }
+
+    public static LocatorDTO toLocator(Map<String, Object> map, String key) {
+        return toLocator(map, key, "auto");
+    }
+
+    private static String normalizeString(Object o) {
+        if (o == null) return null;
+        String s = o.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 }

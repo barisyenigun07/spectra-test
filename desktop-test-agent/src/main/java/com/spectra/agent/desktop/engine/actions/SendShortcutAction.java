@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component("type")
-public class TypeAction implements ActionHandler {
+@Component("sendShortcut")
+public class SendShortcutAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
         Map<String, Object> params = ctx.step().params();
-        ctx.client().type(ctx.step().locator(), SafeConvert.toString(params, "text"));
+        String shortcut = SafeConvert.toString(params, "shortcut");
+        ctx.client().sendShortcut(shortcut);
     }
 }

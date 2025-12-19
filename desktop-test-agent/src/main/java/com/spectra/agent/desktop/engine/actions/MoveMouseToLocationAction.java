@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component("type")
-public class TypeAction implements ActionHandler {
+@Component("moveMouseToLocation")
+public class MoveMouseToLocationAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
         Map<String, Object> params = ctx.step().params();
-        ctx.client().type(ctx.step().locator(), SafeConvert.toString(params, "text"));
+        int x = SafeConvert.toInt(params, "x", 0);
+        int y = SafeConvert.toInt(params, "y", 0);
+        ctx.client().moveMouseToLocation(x, y);
     }
 }

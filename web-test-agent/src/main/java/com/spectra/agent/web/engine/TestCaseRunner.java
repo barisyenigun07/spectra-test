@@ -1,7 +1,7 @@
 package com.spectra.agent.web.engine;
 
 import com.spectra.agent.web.engine.context.ExecutionContext;
-import com.spectra.commons.dto.testcase.TestCaseCreatedEvent;
+import com.spectra.commons.dto.testcase.TestCaseRunRequestedEvent;
 import com.spectra.commons.dto.step.StepDTO;
 import lombok.RequiredArgsConstructor;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +15,7 @@ import java.time.Duration;
 public class TestCaseRunner {
     private final StepExecutor stepExecutor;
 
-    public void runTestCase(TestCaseCreatedEvent evt) {
+    public void runTestCase(TestCaseRunRequestedEvent evt) {
         WebDriver driver = WebDriverFactory.create(evt.config());
         WebDriverWait driverWait = new WebDriverWait(driver, Duration.ofSeconds(10));
 

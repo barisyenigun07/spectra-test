@@ -6,11 +6,13 @@ import java.time.Instant;
 import java.util.List;
 
 public record TestCaseResultDTO(
-        Long id,
+        Long testCaseId,
+        Long runId,
         String targetPlatform,
-        String status,
-        Instant startTime,
-        Instant endTime,
+        TestCaseStatus status,
+        Instant startedAt,
+        Instant finishedAt,
+        long durationMillis,
         List<StepResultDTO> stepResults
 ) {
 }
