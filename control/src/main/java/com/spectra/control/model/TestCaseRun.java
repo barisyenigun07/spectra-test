@@ -1,6 +1,5 @@
 package com.spectra.control.model;
 
-
 import com.spectra.commons.dto.testcase.TestCaseStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "test_case_runs")
@@ -31,8 +31,14 @@ public class TestCaseRun {
     private Instant startedAt;
     @Column(name = "finished_at")
     private Instant finishedAt;
+    @Column(name = "duration_millis")
+    private long durationMillis;
     @Column(name = "failed_steps")
     private int failedSteps;
     @Column(name = "passed_steps")
     private int passedSteps;
+    @Column(name = "skipped_steps")
+    private int skippedSteps;
+    @OneToMany(mappedBy = "testCaseRun", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StepRun> stepRuns;
 }

@@ -1,8 +1,8 @@
-package com.spectra.agent.desktop.engine;
+package com.spectra.agent.web.engine.runner;
 
-import com.spectra.agent.desktop.engine.client.DesktopClient;
-import com.spectra.agent.desktop.engine.context.ExecutionContext;
-import com.spectra.agent.desktop.mq.TestCaseResultPublisher;
+import com.spectra.agent.web.engine.context.ExecutionContext;
+import com.spectra.agent.web.engine.factory.WebDriverFactory;
+import com.spectra.agent.web.mq.TestCaseResultPublisher;
 import com.spectra.commons.dto.step.StepResultDTO;
 import com.spectra.commons.dto.step.StepStatus;
 import com.spectra.commons.dto.testcase.TestCaseResultDTO;
@@ -10,6 +10,8 @@ import com.spectra.commons.dto.testcase.TestCaseRunRequestedEvent;
 import com.spectra.commons.dto.step.StepDTO;
 import com.spectra.commons.dto.testcase.TestCaseStatus;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -25,39 +27,48 @@ public class TestCaseRunner {
     private final TestCaseResultPublisher testCaseResultPublisher;
 
     public void runTestCase(TestCaseRunRequestedEvent evt) {
-        DesktopClient client = DesktopClientFactory.create(evt.config());
-        Instant start = Instant.now();
+        WebDriver driver = WebDriverFactory.create(evt.config());
+        WebDriverWait driverWait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        Instant tcStart = Instant.now();
 
         List<StepResultDTO> stepResults = new ArrayList<>();
         boolean failed = false;
 
         for (StepDTO step : evt.steps()) {
-            Instant s0 = Instant.now();
-            StepStatus status;
+            Instant stStart = Instant.now();
+            StepStatus stepStatus;
             String message = null;
             String errorType = null;
             String errorMessage = null;
+
             try {
                 if (!failed) {
-                    var ctx = new ExecutionContext(client, step);
+                    var ctx = new ExecutionContext(driver, step, driverWait);
                     stepExecutor.executeStep(ctx);
-                    status = StepStatus.PASSED;
+                    stepStatus = StepStatus.PASSED;
                     message = "OK";
                 }
                 else {
-                    status = StepStatus.SKIPPED;
+                    stepStatus = StepStatus.SKIPPED;
                     message = "Skipped due to previous failure";
                 }
             }
+            catch (AssertionError ae) {
+                failed = true;
+                stepStatus = StepStatus.FAILED;
+                errorType = "ASSERTION_FAILED";
+                errorMessage = ae.getMessage();
+            }
             catch (Exception e) {
                 failed = true;
-                status = StepStatus.FAILED;
+                stepStatus = StepStatus.FAILED;
                 errorType = e.getClass().getSimpleName();
                 errorMessage = e.getMessage();
             }
 
-            Instant s1 = Instant.now();
-            long dur = Duration.between(s0, s1).toMillis();
+            Instant stEnd = Instant.now();
+            long dur = Duration.between(stStart, stEnd).toMillis();
 
             stepResults.add(new StepResultDTO(
                     step.stepId(),
@@ -65,10 +76,10 @@ public class TestCaseRunner {
                     step.orderIndex(),
                     step.action(),
                     step.locator(),
-                    status,
+                    stepStatus,
                     message,
-                    s0,
-                    s1,
+                    stStart,
+                    stEnd,
                     dur,
                     errorMessage,
                     errorType,
@@ -76,20 +87,23 @@ public class TestCaseRunner {
             ));
         }
 
-        Instant end = Instant.now();
+        Instant tcEnd = Instant.now();
+        long tcDur = Duration.between(tcStart, tcEnd).toMillis();
         TestCaseStatus testCaseStatus = failed ? TestCaseStatus.FAILED : TestCaseStatus.PASSED;
 
-        TestCaseResultDTO result = new TestCaseResultDTO(
+        TestCaseResultDTO res = new TestCaseResultDTO(
                 evt.testCaseId(),
                 evt.testCaseRunId(),
                 evt.targetPlatform(),
                 testCaseStatus,
-                start,
-                end,
-                Duration.between(start, end).toMillis(),
+                tcStart,
+                tcEnd,
+                tcDur,
                 stepResults
         );
 
-        testCaseResultPublisher.send(result);
+        testCaseResultPublisher.send(res);
+
     }
+
 }

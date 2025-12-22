@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 @RequiredArgsConstructor
 public class TestCaseResultListener {
@@ -26,15 +28,20 @@ public class TestCaseResultListener {
     public void onResult(TestCaseResultDTO res) {
         TestCaseRun testCaseRun = testCaseRunRepository.findById(res.runId()).orElseThrow(() -> new RuntimeException("Test Case Run not found!"));
 
-        //testCaseRun.setStartedAt(res.startedAt());
+        testCaseRun.setStartedAt(res.startedAt());
         testCaseRun.setFinishedAt(res.finishedAt());
+        long dur = Duration.between(testCaseRun.getStartedAt(), testCaseRun.getFinishedAt()).toMillis();
+        testCaseRun.setDurationMillis(dur);
+
         testCaseRun.setStatus(res.status());
 
         long failed = res.stepResults().stream().filter(s -> StepStatus.FAILED.equals(s.status())).count();
         long passed = res.stepResults().stream().filter(s -> StepStatus.PASSED.equals(s.status())).count();
+        long skipped = res.stepResults().stream().filter(s -> StepStatus.SKIPPED.equals(s.status())).count();
 
         testCaseRun.setFailedSteps((int) failed);
         testCaseRun.setPassedSteps((int) passed);
+        testCaseRun.setSkippedSteps((int) skipped);
 
         for (StepResultDTO sr : res.stepResults()) {
             Step step = stepRepository.findById(sr.stepId()).orElse(null);
@@ -43,6 +50,7 @@ public class TestCaseResultListener {
             stepRun.setTestCaseRun(testCaseRun);
             stepRun.setStep(step);
             stepRun.setStatus(sr.status());
+            stepRun.setMessage(sr.message());
             stepRun.setStartedAt(sr.startedAt());
             stepRun.setFinishedAt(sr.finishedAt());
             stepRun.setDurationMillis(sr.durationMillis());

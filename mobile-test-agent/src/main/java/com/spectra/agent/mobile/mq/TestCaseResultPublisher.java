@@ -1,6 +1,6 @@
-package com.spectra.agent.desktop.mq;
+package com.spectra.agent.mobile.mq;
 
-import com.spectra.agent.desktop.config.AmqpConfig;
+import com.spectra.agent.mobile.config.AmqpConfig;
 import com.spectra.commons.dto.testcase.TestCaseResultDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.MessageDeliveryMode;

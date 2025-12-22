@@ -1,12 +1,13 @@
 package com.spectra.control.model;
 
 import com.spectra.commons.dto.step.StepStatus;
-import com.spectra.control.model.converter.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Map;
@@ -31,6 +32,8 @@ public class StepRun {
     @Column(name = "status")
     @Enumerated(value = EnumType.STRING)
     private StepStatus status;
+    @Column(name = "message")
+    private String message;
     @Column(name = "started_at")
     private Instant startedAt;
     @Column(name = "finished_at")
@@ -41,7 +44,7 @@ public class StepRun {
     private String errorType;
     @Column(name = "error_message")
     private String errorMessage;
-    @Convert(converter = MapToJsonConverter.class)
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "extra", columnDefinition = "jsonb")
     private Map<String, Object> extra;
 }

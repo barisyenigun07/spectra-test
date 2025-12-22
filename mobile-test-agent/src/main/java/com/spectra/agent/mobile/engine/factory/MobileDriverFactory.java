@@ -1,4 +1,4 @@
-package com.spectra.agent.mobile.engine;
+package com.spectra.agent.mobile.engine.factory;
 
 import com.spectra.commons.util.SafeConvert;
 import io.appium.java_client.AppiumDriver;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class MobileDriverFactory {
     public static AppiumDriver create(Map<String, Object> config) {
-        String platform = SafeConvert.toString(config, "platform", "Android");
+        String platform = SafeConvert.toString(config, "platform", "android");
         String automation = SafeConvert.toString(config, "automationName", "UiAutomator2");
         String device = SafeConvert.toString(config, "deviceName", "auto");
         String udid = SafeConvert.toString(config, "udid", "auto");

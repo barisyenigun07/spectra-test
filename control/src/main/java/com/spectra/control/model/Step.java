@@ -1,12 +1,13 @@
 package com.spectra.control.model;
 
 import com.spectra.commons.dto.step.StepStatus;
-import com.spectra.control.model.converter.MapToJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Map;
 
@@ -25,12 +26,9 @@ public class Step {
     private int orderIndex;
     @Column(name = "action")
     private String action;
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "params", columnDefinition = "jsonb")
-    @Convert(converter = MapToJsonConverter.class)
     private Map<String, Object> params;
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private StepStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_case_id")
     private TestCase testCase;

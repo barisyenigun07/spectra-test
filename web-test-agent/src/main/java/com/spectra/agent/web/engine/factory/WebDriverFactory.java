@@ -1,4 +1,4 @@
-package com.spectra.agent.web.engine;
+package com.spectra.agent.web.engine.factory;
 
 import com.spectra.commons.util.SafeConvert;
 import org.openqa.selenium.WebDriver;

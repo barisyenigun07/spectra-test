@@ -5,7 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
+
 
 @Component("click")
 public class ClickAction implements ActionHandler{

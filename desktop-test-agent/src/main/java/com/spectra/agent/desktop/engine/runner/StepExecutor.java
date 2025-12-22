@@ -1,7 +1,7 @@
-package com.spectra.agent.mobile.engine;
+package com.spectra.agent.desktop.engine.runner;
 
-import com.spectra.agent.mobile.engine.actions.ActionsRegistry;
-import com.spectra.agent.mobile.engine.context.ExecutionContext;
+import com.spectra.agent.desktop.engine.actions.ActionsRegistry;
+import com.spectra.agent.desktop.engine.context.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

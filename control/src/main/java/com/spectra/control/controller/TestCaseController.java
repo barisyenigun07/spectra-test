@@ -2,9 +2,12 @@ package com.spectra.control.controller;
 
 import com.spectra.commons.dto.testcase.TestCaseCreateRequest;
 import com.spectra.commons.dto.testcase.TestCaseDTO;
+import com.spectra.commons.dto.testcase.TestCaseResultDTO;
 import com.spectra.control.service.TestCaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/testcases")
@@ -20,6 +23,11 @@ public class TestCaseController {
     @PostMapping("/{id}/run")
     public void runTestCase(@PathVariable("id") Long id) {
         testCaseService.runTestCase(id);
+    }
+
+    @GetMapping("/{id}/run/results")
+    public List<TestCaseResultDTO> getTestCaseRunResults(@PathVariable("id") Long testCaseId) {
+        return testCaseService.getTestCaseRunResults(testCaseId);
     }
 
     @GetMapping("/{id}")

@@ -1,9 +1,10 @@
-package com.spectra.agent.desktop.engine;
+package com.spectra.agent.web.engine.runner;
 
-import com.spectra.agent.desktop.engine.actions.ActionsRegistry;
-import com.spectra.agent.desktop.engine.context.ExecutionContext;
+import com.spectra.agent.web.engine.actions.ActionsRegistry;
+import com.spectra.agent.web.engine.context.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 
 @Component
 @RequiredArgsConstructor
