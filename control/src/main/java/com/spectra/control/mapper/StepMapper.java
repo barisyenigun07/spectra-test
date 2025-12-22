@@ -16,7 +16,6 @@ public class StepMapper {
         return new StepDTO(
                 entity.getId(),
                 entity.getOrderIndex(),
-                entity.getStatus(),
                 entity.getAction(),
                 entity.getLocator() == null ? null : locatorMapper.toDto(entity.getLocator()),
                 entity.getParams()

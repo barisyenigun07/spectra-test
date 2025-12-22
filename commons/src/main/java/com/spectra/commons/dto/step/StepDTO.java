@@ -7,7 +7,6 @@ import java.util.Map;
 public record StepDTO(
         Long stepId,
         int orderIndex,
-        StepStatus status,
         String action,
         LocatorDTO locator,
         Map<String, Object> params
