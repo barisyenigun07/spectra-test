@@ -18,7 +18,6 @@ public class TestCaseMapper{
         return new TestCaseDTO(
                 entity.getId(),
                 entity.getTargetPlatform(),
-                entity.getStatus(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.getSteps()

@@ -9,7 +9,6 @@ import java.util.Map;
 public record TestCaseDTO(
         Long testCaseId,
         String targetPlatform,
-        TestCaseStatus status,
         Instant createdAt,
         Instant updatedAt,
         List<StepDTO> steps,
