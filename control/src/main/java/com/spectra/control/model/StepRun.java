@@ -13,7 +13,14 @@ import java.time.Instant;
 import java.util.Map;
 
 @Entity
-@Table(name = "step_runs")
+@Table(
+        name = "step_runs",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_step_run_testcase_step",
+                        columnNames = {"test_case_run_id", "step_id"}
+                )
+        })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,12 +31,12 @@ public class StepRun {
     @Column(name = "id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "test_case_run_id")
+    @JoinColumn(name = "test_case_run_id", nullable = false)
     private TestCaseRun testCaseRun;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "step_id")
+    @JoinColumn(name = "step_id", nullable = false)
     private Step step;
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StepStatus status;
     @Column(name = "message")

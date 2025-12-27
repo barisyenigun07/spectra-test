@@ -7,21 +7,24 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Component("assertText")
 public class AssertTextAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
         WebElement element = ctx.driverWait().until(ExpectedConditions.visibilityOfElementLocated(ctx.by()));
-        Map<String, Object> params = ctx.step().params();
-        String text = SafeConvert.toString(params,"text", null);
+        String actualText = element.getText();
 
-        if (element.getText().isBlank()) {
-            throw new AssertionError("Text not found");
+        Map<String, Object> params = ctx.step().params();
+        String expectedText = SafeConvert.toString(params,"text", null);
+
+        if (actualText.isBlank()) {
+            throw new AssertionError("Text not found!");
         }
 
-        else if (!element.getText().equals(text)) {
-            throw new AssertionError("Texts not matched!");
+        else if (!Objects.equals(actualText, expectedText)) {
+            throw new AssertionError("Expected: " + expectedText + ", Actual: " + actualText);
         }
     }
 }

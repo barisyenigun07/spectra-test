@@ -33,7 +33,7 @@ public class TestCaseService {
     private final TestCaseRunPublisher testCaseRunPublisher;
 
     @Transactional
-    public void createTestCase(TestCaseCreateRequest req) {
+    public TestCaseDTO createTestCase(TestCaseCreateRequest req) {
         TestCase testCase = new TestCase();
         testCase.setTargetPlatform(req.targetPlatform());
 
@@ -51,15 +51,16 @@ public class TestCaseService {
 
         testCase.setSteps(steps);
         testCase.setConfig(req.config());
-        testCaseRepository.save(testCase);
+        return testCaseMapper.toDto(testCaseRepository.save(testCase));
     }
 
     @Transactional
-    public void runTestCase(Long id) {
+    public Long runTestCase(Long id) {
         TestCase testCase = testCaseRepository.findById(id).orElseThrow(() -> new RuntimeException("Test Case not found!"));
 
         TestCaseRun run = new TestCaseRun();
         run.setTestCase(testCase);
+        run.setStartedAt(Instant.now());
         run.setStatus(TestCaseStatus.RUNNING);
         run = testCaseRunRepository.save(run);
 
@@ -82,11 +83,17 @@ public class TestCaseService {
             }
         });
 
+        return run.getId();
     }
 
     public TestCaseDTO getTestCase(Long id) {
         TestCase testCase = testCaseRepository.findById(id).orElseThrow(() -> new RuntimeException("Test Case not found!"));
         return testCaseMapper.toDto(testCase);
+    }
+
+    public List<TestCaseDTO> getTestCases() {
+        List<TestCase> testCases = testCaseRepository.findAll();
+        return testCases.stream().map(testCaseMapper::toDto).toList();
     }
 
     public List<TestCaseResultDTO> getTestCaseRunResults(Long testCaseId) {
@@ -97,8 +104,9 @@ public class TestCaseService {
                 .toList();
     }
 
-    public void deleteTestCase(Long id) {
+    public Long deleteTestCase(Long id) {
         TestCase testCase = testCaseRepository.findById(id).orElseThrow(() -> new RuntimeException("Test Case not found!"));
         testCaseRepository.delete(testCase);
+        return id;
     }
 }

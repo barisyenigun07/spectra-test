@@ -3,6 +3,7 @@ package com.spectra.control.service;
 import com.spectra.commons.dto.step.StepResultDTO;
 import com.spectra.commons.dto.step.StepStatus;
 import com.spectra.commons.dto.testcase.TestCaseResultDTO;
+import com.spectra.commons.dto.testcase.TestCaseStatus;
 import com.spectra.control.model.Step;
 import com.spectra.control.model.StepRun;
 import com.spectra.control.model.TestCaseRun;
@@ -15,6 +16,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +30,17 @@ public class TestCaseResultListener {
     public void onResult(TestCaseResultDTO res) {
         TestCaseRun testCaseRun = testCaseRunRepository.findById(res.runId()).orElseThrow(() -> new RuntimeException("Test Case Run not found!"));
 
-        testCaseRun.setStartedAt(res.startedAt());
+        if (testCaseRun.getStatus() != TestCaseStatus.RUNNING) return;
+
+        if (testCaseRun.getStartedAt() == null) {
+            testCaseRun.setStartedAt(res.startedAt());
+        }
+
         testCaseRun.setFinishedAt(res.finishedAt());
-        long dur = Duration.between(testCaseRun.getStartedAt(), testCaseRun.getFinishedAt()).toMillis();
-        testCaseRun.setDurationMillis(dur);
+
+        if (testCaseRun.getStartedAt() != null && testCaseRun.getFinishedAt() != null) {
+            testCaseRun.setDurationMillis(Duration.between(testCaseRun.getStartedAt(), testCaseRun.getFinishedAt()).toMillis());
+        }
 
         testCaseRun.setStatus(res.status());
 
@@ -43,10 +52,13 @@ public class TestCaseResultListener {
         testCaseRun.setPassedSteps((int) passed);
         testCaseRun.setSkippedSteps((int) skipped);
 
+        var stepIds = res.stepResults().stream().map(StepResultDTO::stepId).toList();
+        var stepMap = stepRepository.findAllById(stepIds).stream().collect(Collectors.toMap(Step::getId, s -> s));
+
         for (StepResultDTO sr : res.stepResults()) {
-            Step step = stepRepository.findById(sr.stepId()).orElse(null);
+            Step step = stepMap.get(sr.stepId());
             if (step == null) continue;
-            StepRun stepRun = new StepRun();
+            StepRun stepRun = stepRunRepository.findByTestCaseRunIdAndStepId(testCaseRun.getId(), step.getId()).orElseGet(StepRun::new);
             stepRun.setTestCaseRun(testCaseRun);
             stepRun.setStep(step);
             stepRun.setStatus(sr.status());

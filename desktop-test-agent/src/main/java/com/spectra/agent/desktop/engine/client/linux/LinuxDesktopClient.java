@@ -134,6 +134,11 @@ public class LinuxDesktopClient implements DesktopClient {
         ldtp.oneRight(locator.value(), n);
     }
 
+    @Override
+    public void close() {
+
+    }
+
     private void dragBetween(int startX, int startY, int endX, int endY) {
         ldtp.generateMouseEvent(startX, startY);
         ldtp.generateMouseEvent(startX, startY, "b1p");

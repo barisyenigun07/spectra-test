@@ -19,6 +19,7 @@ public class MacOSDesktopClient extends AbstractAppiumDriverClient<Mac2Driver> {
             case "name" -> AppiumBy.name(locator.value());
             case "className" -> AppiumBy.className(locator.value());
             case "accessibilityId" -> AppiumBy.accessibilityId(locator.value());
+            case "xpath" -> AppiumBy.xpath(locator.value());
             default -> throw new IllegalArgumentException("Unsupported locator type!");
         };
     }

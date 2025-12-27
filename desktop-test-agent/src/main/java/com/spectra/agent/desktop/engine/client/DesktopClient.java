@@ -26,4 +26,5 @@ public interface DesktopClient {
     void scrollDown(LocatorDTO locator, int amount);
     void scrollLeft(LocatorDTO locator, int amount);
     void scrollRight(LocatorDTO locator, int amount);
+    void close();
 }

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 public class HideKeyboardAction implements ActionHandler {
     @Override
     public void handle(ExecutionContext ctx) {
-        
+        ctx.driver().executeScript("mobile: hideKeyboard");
     }
 }

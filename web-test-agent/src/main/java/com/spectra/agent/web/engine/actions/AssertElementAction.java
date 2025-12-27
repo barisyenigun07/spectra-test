@@ -12,7 +12,7 @@ public class AssertElementAction implements ActionHandler{
     public void handle(ExecutionContext ctx) {
         WebElement element = ctx.driverWait().until(ExpectedConditions.visibilityOfElementLocated(ctx.by()));
 
-        if (element.getSize().width == 0 || element.getSize().height == 0) {
+        if (!element.isDisplayed()) {
             throw new AssertionError("Element not found!");
         }
     }

@@ -13,7 +13,7 @@ public class TestCaseResultPublisher {
     private final RabbitTemplate rabbitTemplate;
 
     public void send(TestCaseResultDTO res) {
-        String rk = "testcase.result.completed.#";
+        String rk = "testcase.result.completed";
         rabbitTemplate.convertAndSend(AmqpConfig.RESULTS_EX, rk, res, m -> {
             m.getMessageProperties().setContentType("application/json");
             m.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

@@ -204,6 +204,13 @@ public abstract class AbstractAppiumDriverClient<D extends AppiumDriver> impleme
         }
     }
 
+    @Override
+    public void close() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
     protected WebElement find(LocatorDTO locator) {
         By by = resolve(locator);
         return wait.until(ExpectedConditions.visibilityOfElementLocated(by));

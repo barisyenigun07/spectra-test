@@ -55,8 +55,9 @@ public class DesktopClientFactory {
         Mac2Options options = new Mac2Options()
                 .setBundleId(bundleId);
         options.setCapability("appium:automationName", "mac2");
-        options.setCapability("platformName", "mac");
+        options.setCapability("platformName", "Mac");
         options.setCapability("appium:launchTimeout", 10000);
+        options.setCapability("appium:newCommandTimeout", 600);
 
         URL appiumUrl = buildAppiumUrl(config, "APPIUM_URL");
 
