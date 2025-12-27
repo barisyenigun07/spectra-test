@@ -1,4 +1,4 @@
-// app/job-flow/page.tsx (veya components/JobFlowEditor.tsx)
+// app/testCase-flow/page.tsx (veya components/JobFlowEditor.tsx)
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
@@ -17,24 +17,24 @@ import  {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import type { Step, Job, Locator } from "@/models/Models";
+import type { StepCreateDTO, StepDTO, TestCaseCreateRequest, TestCaseDTO, LocatorDTO } from "@/lib/models";
 
-const initialSteps: Step[] = [
+const initialSteps: StepCreateDTO[] = [
   {
     orderIndex: 1,
     action: "openUrl",
     locator: { type: null, value: null },
-    inputValue: "https://www.selenium.dev",
+    params: { url: "https://www.selenium.dev" },
   },
   {
     orderIndex: 2,
     action: "click",
     locator: { type: "id", value: "navbarDropdown" },
-    inputValue: null,
+    params: null,
   },
 ];
 
-function stepsToNodesAndEdges(steps: Step[]) {
+function stepsToNodesAndEdges(steps: StepCreateDTO[]) {
   const sorted = [...steps].sort((a, b) => a.orderIndex - b.orderIndex);
 
   const nodes: Node[] = sorted.map((step, idx) => ({
@@ -74,7 +74,7 @@ function stepsToNodesAndEdges(steps: Step[]) {
 
 export default function JobFlowPage() {
   
-  const [job, setJob] = useState<Job>({
+  const [testCase, setTestCase] = useState<TestCaseCreateRequest>({
     targetPlatform: "web",
     steps: initialSteps,
     config: {
@@ -84,8 +84,8 @@ export default function JobFlowPage() {
   });
 
   const { nodes: initialNodes, edges: initialEdges } = useMemo(
-    () => stepsToNodesAndEdges(job.steps),
-    [job.steps]
+    () => stepsToNodesAndEdges(testCase.steps),
+    [testCase.steps]
   );
 
   const [nodes, setNodes, onNodesChange] =
@@ -102,13 +102,13 @@ export default function JobFlowPage() {
 
   // Yeni step eklemek için
   const addStep = () => {
-    setJob((prev) => {
+    setTestCase((prev) => {
       const nextOrder = prev.steps.length + 1;
-      const newStep: Step = {
+      const newStep: StepCreateDTO = {
         orderIndex: nextOrder,
         action: "click",
         locator: { type: "id", value: "myElement" },
-        inputValue: null,
+        params: null,
       };
 
       const updatedSteps = [...prev.steps, newStep];
@@ -121,19 +121,19 @@ export default function JobFlowPage() {
     });
   };
 
-  // Örneğin job’ı backend’e POST etmek için
+  // Örneğin testCase’ı backend’e POST etmek için
   const sendToBackend = async () => {
     // orderIndex’leri node sırasına göre güncellemek istersen
     // burada node.id → step eşlemesini yapıp yeniden sırala.
     const payload = {
-      targetPlatform: job.targetPlatform,
-      steps: job.steps.map((s) => ({
+      targetPlatform: testCase.targetPlatform,
+      steps: testCase.steps.map((s) => ({
         orderIndex: s.orderIndex,
         action: s.action,
         locator: s.locator,
-        inputValue: s.inputValue ?? null,
+        params: s.params ?? null,
       })),
-      config: job.config,
+      config: testCase.config,
     };
 
     console.log("Sending payload:", payload);
@@ -152,7 +152,7 @@ export default function JobFlowPage() {
       const json = await res.json();
       console.log("Job created:", json);
     } catch (e) {
-      console.error("Failed to create job:", e);
+      console.error("Failed to create testCase:", e);
     }
   };
 
@@ -182,25 +182,25 @@ export default function JobFlowPage() {
           <div>
             <div className="text-[11px] text-slate-500">Target Platform</div>
             <div className="font-mono text-[11px]">
-              {job.targetPlatform.toUpperCase()}
+              {testCase.targetPlatform.toUpperCase()}
             </div>
           </div>
           <div>
             <div className="text-[11px] text-slate-500">Browser</div>
             <div className="font-mono text-[11px]">
-              {job.config.browser ?? "chrome"}
+              {testCase.config.browser ?? "chrome"}
             </div>
           </div>
           <div>
             <div className="text-[11px] text-slate-500">Headless</div>
             <div className="font-mono text-[11px]">
-              {job.config.headless ?? "true"}
+              {testCase.config.headless ?? "true"}
             </div>
           </div>
           <div>
             <div className="text-[11px] text-slate-500">Steps</div>
             <pre className="text-[10px] bg-white p-2 rounded border border-slate-200 max-h-40 overflow-auto">
-              {JSON.stringify(job.steps, null, 2)}
+              {JSON.stringify(testCase.steps, null, 2)}
             </pre>
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function JobFlowPage() {
           onClick={sendToBackend}
           className="text-xs bg-slate-900 text-white rounded px-3 py-1 hover:bg-slate-800"
         >
-          Send Job to Backend
+          Send Test Case to Backend
         </button>
       </div>
     </div>
