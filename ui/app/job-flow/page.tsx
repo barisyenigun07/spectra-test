@@ -17,7 +17,7 @@ import  {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import type { StepCreateDTO, StepDTO, TestCaseCreateRequest, TestCaseDTO, LocatorDTO } from "@/lib/models";
+import type { StepCreateDTO, StepDTO, TestCaseCreateRequest, TestCaseDTO, LocatorDTO } from "@/types/models";
 
 const initialSteps: StepCreateDTO[] = [
   {

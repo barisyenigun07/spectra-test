@@ -1,4 +1,4 @@
-import { TestCaseCreateRequest, TestCaseDTO, TestCaseResultDTO } from "./models";
+import { TestCaseCreateRequest, TestCaseDTO, TestCaseResultDTO } from "../types/models";
 
 const BASE_URL = process.env.NEXT_PUBLIC_CONTROL_API_BASE_URL!;
 

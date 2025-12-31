@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from '@/lib/api';
-import { StepCreateDTO, TestCaseCreateRequest } from '@/lib/models';
+import { StepCreateDTO, TestCaseCreateRequest } from '@/types/models';
 import React, { useMemo, useState } from 'react'
 import { Card, CardContent } from '../ui/card';
 import { Input } from '../ui/input';

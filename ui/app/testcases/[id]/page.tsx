@@ -1,11 +1,8 @@
-import React from 'react'
+import TestCaseDetailClient from "@/components/testcases/TestCaseDetailClient";
 
-const TestCaseRun = () => {
+export default function TestCaseDetailPage({params}: {params: {id: string}}) {
+  const id = Number(params.id);
   return (
-    <div className="bg-amber-800 h-screen">
-        
-    </div>
-  )
+    <TestCaseDetailClient testCaseId={id}/>
+  );
 }
-
-export default TestCaseRun
