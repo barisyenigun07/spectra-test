@@ -43,7 +43,7 @@ public class TestCaseService {
             Step step = new Step();
             step.setOrderIndex(s.orderIndex());
             step.setAction(s.action());
-            step.setLocator(new Locator(s.locator().type(), s.locator().value()));
+            step.setLocator(s.locator() == null ? null : new Locator(s.locator().type(), s.locator().value()));
             step.setParams(s.params());
             step.setTestCase(testCase);
             steps.add(step);
