@@ -7,6 +7,8 @@ import StatusBadge from "@/components/StatusBadge";
 import StepResultsTable from "@/components/testcases/StepResultsTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RunResultsPanel(props: {
   testCaseId: number;
@@ -14,8 +16,19 @@ export default function RunResultsPanel(props: {
   latest: TestCaseResultDTO | null;
   isRunning: boolean;
   reload: () => Promise<void> | void;
+  activeRunId?: number;
 }) {
-  const { testCaseId, results, latest, isRunning, reload } = props;
+  const { testCaseId, results, latest, isRunning, reload, activeRunId } = props;
+  const router = useRouter();
+
+  const selectedRunId = activeRunId ?? latest?.runId;
+
+  const selected = selectedRunId
+  ? results?.find((r) => r.runId === selectedRunId) ?? latest
+  : latest;
+
+  const title = activeRunId ? "Selected Run" : "Latest Run";
+
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -23,15 +36,21 @@ export default function RunResultsPanel(props: {
     try {
       setErr(null);
       setBusy(true);
-      await api.runTestCase(testCaseId);
-      // run tetikleyince hemen yenile (ve polling zaten devreye girer)
+      const { runId } = await api.runTestCase(testCaseId);
+      toast.success("Run started", { description: `runId=${runId}` });
+      router.push(`/testcases/${testCaseId}?run=${runId}`);
       await Promise.resolve(reload());
     } catch (e: any) {
       setErr(e?.message ?? "Failed to run testcase");
+      toast.error("Failed to run testcase", { description: e?.message });
     } finally {
       setBusy(false);
     }
   };
+
+  const onSelectRun = (runId: number) => {
+    router.push(`/testcases/${testCaseId}?run=${runId}`);
+  }
 
   return (
     <div className="space-y-4">
@@ -41,9 +60,9 @@ export default function RunResultsPanel(props: {
 
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="text-sm font-medium">Latest Run</div>
+              <div className="text-sm font-medium">{title}</div>
               <div className="text-xs text-muted-foreground mt-1">
-                {latest ? `runId=${latest.runId}` : "No runs yet."}
+                {selected ? `runId=${selected.runId}` : "No runs yet."}
               </div>
             </div>
 
@@ -57,18 +76,18 @@ export default function RunResultsPanel(props: {
             </div>
           </div>
 
-          {latest && (
+          {selected && (
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <StatusBadge status={latest.status} />
+              <StatusBadge status={selected.status} />
               <span className="text-muted-foreground">
-                Duration: {latest.durationMillis} ms
+                Duration: {selected.durationMillis} ms
               </span>
               <span className="text-muted-foreground">
-                Started: {new Date(latest.startedAt).toLocaleString()}
+                Started: {new Date(selected.startedAt).toLocaleString()}
               </span>
-              {!isRunning && latest.finishedAt && (
+              {!isRunning && selected.finishedAt && (
                 <span className="text-muted-foreground">
-                  Finished: {new Date(latest.finishedAt).toLocaleString()}
+                  Finished: {new Date(selected.finishedAt).toLocaleString()}
                 </span>
               )}
             </div>
@@ -76,8 +95,8 @@ export default function RunResultsPanel(props: {
         </CardContent>
       </Card>
 
-      {latest?.stepResults ? (
-        <StepResultsTable steps={latest.stepResults} />
+      {selected?.stepResults ? (
+        <StepResultsTable steps={selected.stepResults} />
       ) : (
         <Card>
           <CardContent className="pt-6 text-sm text-muted-foreground">
@@ -91,22 +110,33 @@ export default function RunResultsPanel(props: {
           <CardContent className="pt-6">
             <div className="text-sm font-medium">Run History</div>
             <div className="mt-2 text-xs text-muted-foreground">
-              Showing {results.length} runs (latest first). (We can add a dedicated run page later.)
+              Showing {results.length} runs (latest first).
             </div>
 
             <div className="mt-3 space-y-2">
-              {results.map((r) => (
-                <div key={r.runId} className="flex items-center justify-between rounded-md border p-3">
-                  <div className="flex items-center gap-3">
-                    <div className="text-sm font-medium">#{r.runId}</div>
-                    <StatusBadge status={r.status} />
-                    <div className="text-xs text-muted-foreground">
-                      {new Date(r.startedAt).toLocaleString()}
+              {results.map((r) => {
+                const isSelected = r.runId === selectedRunId;
+                return (
+                  <button
+                    key={r.runId}
+                    type="button"
+                    onClick={() => onSelectRun(r.runId)}
+                    className={[
+                      "w-full text-left flex items-center justify-between rounded-md border p-3",
+                      isSelected ? "border-primary" : "",
+                    ].join(" ")}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm font-medium">#{r.runId}</div>
+                      <StatusBadge status={r.status} />
+                      <div className="text-xs text-muted-foreground">
+                        {new Date(r.startedAt).toLocaleString()}
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-xs text-muted-foreground">{r.durationMillis} ms</div>
-                </div>
-              ))}
+                    <div className="text-xs text-muted-foreground">{r.durationMillis} ms</div>
+                  </button>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

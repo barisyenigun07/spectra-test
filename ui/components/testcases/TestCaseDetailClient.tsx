@@ -9,7 +9,7 @@ import { useRunResultsPolling } from "@/hooks/useRunResultsPolling";
 import TestCaseDefinitionCard from "@/components/testcases/TestCaseDefinitionCard";
 import RunResultsPanel from "@/components/testcases/RunResultsPanel";
 
-export default function TestCaseDetailClient({ testCaseId }: { testCaseId: number }) {
+export default function TestCaseDetailClient({ testCaseId, activeRunId }: { testCaseId: number; activeRunId?: number; }) {
   const { data: tc, loading: tcLoading, error: tcError, reload: reloadTc } = useTestCase(testCaseId);
 
   const {
@@ -22,7 +22,12 @@ export default function TestCaseDetailClient({ testCaseId }: { testCaseId: numbe
   } = useRunResultsPolling(testCaseId, {
     runningIntervalMs: 1500,
     idleIntervalMs: 0, // koşu bitince polling durur
+    activeRunId,
   });
+
+  const selectedLatest = activeRunId && results?.length ? results.find((r) => r.runId === activeRunId) ?? latest : latest;
+
+  const selectedIsRunning = selectedLatest?.status === "RUNNING" ? true : isRunning;
 
   if (!testCaseId || Number.isNaN(testCaseId)) {
     return (
@@ -65,9 +70,10 @@ export default function TestCaseDetailClient({ testCaseId }: { testCaseId: numbe
             <RunResultsPanel
               testCaseId={testCaseId}
               results={results}
-              latest={latest}
-              isRunning={isRunning}
+              latest={selectedLatest}
+              isRunning={selectedIsRunning}
               reload={reloadResults}
+              activeRunId={activeRunId}
             />
 
             {resLoading && (
