@@ -3,10 +3,12 @@ package com.spectra.agent.desktop.engine.client.linux;
 import com.cobra.ldtp.Ldtp;
 import com.spectra.agent.desktop.engine.client.DesktopClient;
 import com.spectra.commons.dto.locator.LocatorDTO;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class LinuxDesktopClient implements DesktopClient {
+    @Getter
     private final Ldtp ldtp;
 
     private int lastX = 0;

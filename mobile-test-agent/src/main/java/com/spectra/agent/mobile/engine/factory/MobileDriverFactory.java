@@ -3,56 +3,72 @@ package com.spectra.agent.mobile.engine.factory;
 import com.spectra.commons.util.SafeConvert;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import io.appium.java_client.ios.options.XCUITestOptions;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
 public class MobileDriverFactory {
     public static AppiumDriver create(Map<String, Object> config) {
-        String platform = SafeConvert.toString(config, "platform", "android");
-        String automation = SafeConvert.toString(config, "automationName", "UiAutomator2");
-        String device = SafeConvert.toString(config, "deviceName", "auto");
-        String udid = SafeConvert.toString(config, "udid", "auto");
+        String platform = SafeConvert.toString(config, "platformName", "android");
+        //String automation = SafeConvert.toString(config, "automationName", "UiAutomator2");
+        String device = SafeConvert.toString(config, "deviceName", "").trim();
+        String udid = SafeConvert.toString(config, "udid", null);
+        String platformVersion = SafeConvert.toString(config, "platformVersion", null);
 
         String remoteUrl = System.getenv("APPIUM_URL");
         if (remoteUrl == null) throw new IllegalStateException("APPIUM_URL must be set!");
 
-        DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", platform);
-        caps.setCapability("automationName", automation);
-        caps.setCapability("deviceName", device);
-        caps.setCapability("udid", udid);
+        URL server;
+
+        try {
+            server = URI.create(remoteUrl).toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Invalid APPIUM_URL", e);
+        }
 
         if (platform.equals("android")) {
-            if (config.containsKey("appPackage")) {
-                caps.setCapability("appPackage", config.get("appPackage"));
-            }
+            UiAutomator2Options opts = new UiAutomator2Options();
+            opts.setPlatformName("Android");
+            opts.setAutomationName("UiAutomator2");
+            if (!device.isEmpty()) opts.setDeviceName(device);
+            if (udid != null && !udid.isBlank()) opts.setUdid(udid);
+            if (platformVersion != null && !platformVersion.isBlank()) opts.setPlatformVersion(platformVersion);
 
-            if (config.containsKey("appActivity")) {
-                caps.setCapability("appActivity", config.get("appActivity"));
-            }
+            String appActivity = SafeConvert.toString(config, "appActivity", null);
+            String appPackage = SafeConvert.toString(config, "appPackage", null);
+            String app = SafeConvert.toString(config, "app", null);
+
+            if (app != null && !app.isBlank()) opts.setApp(app);
+            if (appActivity != null && !appActivity.isBlank()) opts.setAppActivity(appActivity);
+            if (appPackage != null && !appPackage.isBlank()) opts.setAppPackage(appPackage);
+
+            return new AndroidDriver(server, opts);
         }
 
         if (platform.equals("ios")) {
-            if (config.containsKey("bundleId")) {
-                caps.setCapability("bundleId", config.get("bundleId"));
-            }
+            XCUITestOptions opts = new XCUITestOptions();
+            opts.setPlatformName("iOS");
+            opts.setAutomationName("XCUITest");
 
-            if (config.containsKey("app")) {
-                caps.setCapability("app", config.get("app"));
-            }
+            if (!device.isEmpty()) opts.setDeviceName(device);
+            if (udid != null && !udid.isBlank()) opts.setUdid(udid);
+            if (platformVersion != null && !platformVersion.isBlank()) opts.setPlatformVersion(platformVersion);
+
+            String app = SafeConvert.toString(config, "app", null);
+            String bundleId = SafeConvert.toString(config, "bundleId", null);
+
+            if (app != null && !app.isBlank()) opts.setApp(app);
+            else if (bundleId != null && !bundleId.isBlank()) opts.setBundleId(bundleId);
+            else throw new IllegalArgumentException("iOS requires app or bundleId");
+
+            return new IOSDriver(server, opts);
         }
 
-        try {
-            URL server = URI.create(remoteUrl).toURL();
-            return platform.equals("ios")
-                    ? new IOSDriver(server, caps)
-                    : new AndroidDriver(server, caps);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to init Appium driver", e);
-        }
+        return null;
     }
 }

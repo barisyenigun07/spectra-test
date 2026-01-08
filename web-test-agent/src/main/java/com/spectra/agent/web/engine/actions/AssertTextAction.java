@@ -17,7 +17,7 @@ public class AssertTextAction implements ActionHandler {
         String actualText = element.getText();
 
         Map<String, Object> params = ctx.step().params();
-        String expectedText = SafeConvert.toString(params,"text", null);
+        String expectedText = SafeConvert.toString(params,"expectedText", null);
 
         if (actualText.isBlank()) {
             throw new AssertionError("Text not found!");

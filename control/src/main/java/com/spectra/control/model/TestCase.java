@@ -1,6 +1,5 @@
 package com.spectra.control.model;
 
-import com.spectra.commons.dto.testcase.TestCaseStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,4 +40,6 @@ public class TestCase {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "config", columnDefinition = "jsonb")
     private Map<String, Object> config;
+    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestCaseRun> testCaseRuns;
 }

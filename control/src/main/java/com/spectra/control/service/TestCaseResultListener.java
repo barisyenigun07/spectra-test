@@ -16,6 +16,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,14 +33,18 @@ public class TestCaseResultListener {
 
         if (testCaseRun.getStatus() != TestCaseStatus.RUNNING) return;
 
-        if (testCaseRun.getStartedAt() == null) {
-            testCaseRun.setStartedAt(res.startedAt());
+        Instant started = res.startedAt();
+        Instant finished = res.finishedAt();
+
+        testCaseRun.setStartedAt(started);
+        testCaseRun.setFinishedAt(finished);
+
+        if (started != null && finished != null) {
+            testCaseRun.setDurationMillis(Duration.between(started, finished).toMillis());
         }
 
-        testCaseRun.setFinishedAt(res.finishedAt());
-
-        if (testCaseRun.getStartedAt() != null && testCaseRun.getFinishedAt() != null) {
-            testCaseRun.setDurationMillis(Duration.between(testCaseRun.getStartedAt(), testCaseRun.getFinishedAt()).toMillis());
+        else if (started != null) {
+            testCaseRun.setDurationMillis(Duration.between(started, Instant.now()).toMillis());
         }
 
         testCaseRun.setStatus(res.status());

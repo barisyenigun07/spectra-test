@@ -254,4 +254,5 @@ public abstract class AbstractAppiumDriverClient<D extends AppiumDriver> impleme
     }
 
     protected abstract By resolve(LocatorDTO locator);
+    public abstract AppiumDriver getDriver();
 }

@@ -39,7 +39,7 @@ public class StepRun {
     @Column(name = "status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StepStatus status;
-    @Column(name = "message")
+    @Column(name = "message", columnDefinition = "TEXT")
     private String message;
     @Column(name = "started_at")
     private Instant startedAt;
@@ -47,9 +47,9 @@ public class StepRun {
     private Instant finishedAt;
     @Column(name = "duration_millis")
     private long durationMillis;
-    @Column(name = "error_type")
+    @Column(name = "error_type", length = 100)
     private String errorType;
-    @Column(name = "error_message")
+    @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "extra", columnDefinition = "jsonb")

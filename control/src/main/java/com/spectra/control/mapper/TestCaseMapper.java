@@ -1,5 +1,6 @@
 package com.spectra.control.mapper;
 
+import com.spectra.commons.dto.step.StepResultDTO;
 import com.spectra.commons.dto.testcase.TestCaseDTO;
 import com.spectra.commons.dto.testcase.TestCaseResultDTO;
 import com.spectra.control.model.TestCase;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,15 +32,24 @@ public class TestCaseMapper{
     }
 
     public TestCaseResultDTO toResultDto(TestCaseRun entity) {
+        Instant started = entity.getStartedAt();
+        Instant finished = entity.getFinishedAt();
+
+        long durationMillis = 0L;
+        if (started != null) {
+            Instant end = (finished != null) ? finished : Instant.now();
+            durationMillis = Duration.between(started, end).toMillis();
+        }
+
         return new TestCaseResultDTO(
                 entity.getTestCase().getId(),
                 entity.getId(),
                 entity.getTestCase().getTargetPlatform(),
                 entity.getStatus(),
-                entity.getStartedAt(),
-                entity.getFinishedAt(),
-                Duration.between(entity.getStartedAt(), entity.getFinishedAt()).toMillis(),
-                entity.getStepRuns().stream().map(stepMapper::toResultDTO).toList()
+                started,
+                finished,
+                durationMillis,
+                (entity.getStepRuns() == null ? List.<StepResultDTO>of() : entity.getStepRuns().stream().map(stepMapper::toResultDTO).toList())
         );
     }
 }

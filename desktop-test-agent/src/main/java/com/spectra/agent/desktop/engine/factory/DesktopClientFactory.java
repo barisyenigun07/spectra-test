@@ -66,13 +66,13 @@ public class DesktopClientFactory {
     }
 
     private static WindowsDesktopClient buildWindowsClient(Map<String, Object> config) {
-        String appId = SafeConvert.toString(config, "appId");
-        if (appId == null || appId.isBlank()) {
-            throw new IllegalArgumentException("appId is required for Windows desktop client");
+        String app = SafeConvert.toString(config, "app");
+        if (app == null || app.isBlank()) {
+            throw new IllegalArgumentException("app is required for Windows desktop client");
         }
 
         WindowsOptions options = new WindowsOptions()
-                .setApp(SafeConvert.toString(config, "app"));
+                .setApp(app);
         options.setCapability("platformName", "Windows");
         options.setCapability("deviceName", "WindowsPC");
         options.setCapability("ms:waitForAppLaunch", 10);

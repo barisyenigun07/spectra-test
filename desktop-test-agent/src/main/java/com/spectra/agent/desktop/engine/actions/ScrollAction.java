@@ -16,7 +16,7 @@ public class ScrollAction implements ActionHandler {
         Map<String, Object> params = ctx.step().params();
         String direction = SafeConvert.toString(params, "direction");
         int amount = SafeConvert.toInt(params, "amount", 1);
-        LocatorDTO target = SafeConvert.toLocator(params, "targetLocator");
+        LocatorDTO target = ctx.step().locator();
 
         DesktopClient client = ctx.client();
 
