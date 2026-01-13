@@ -4,6 +4,16 @@ type Platform = "web" | "mobile" | "desktop";
 
 const NO_PARAMS = (title: string): SchemaDef => ({ title, fields: [] });
 
+const NO_LOCATOR_ACTIONS: Record<Platform, Set<string>> = {
+  web: new Set(["openUrl", "navigateBack", "navigateFront"]),
+  mobile: new Set(["swipe", "navigateBack", "navigateFront"]),
+  desktop: new Set([""])
+}
+
+export function actionRequiresLocator(platform: Platform, action: string) {
+  return !NO_LOCATOR_ACTIONS[platform]?.has(action);
+}
+
 // Action → params schema (paramı olmayanlar fields: [])
 export const ACTION_PARAM_SCHEMAS: Record<Platform, Record<string, SchemaDef>> = {
   web: {

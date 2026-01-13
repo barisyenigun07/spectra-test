@@ -14,7 +14,7 @@ import { Combobox } from "@/components/ui/combobox";
 
 import SchemaForm from "@/components/forms/SchemaForm";
 import { PLATFORM_CONFIG_SCHEMAS } from "@/types/platformSchemas";
-import { ACTION_PARAM_SCHEMAS } from "@/types/actionSchemas";
+import { ACTION_PARAM_SCHEMAS, actionRequiresLocator } from "@/types/actionSchemas";
 
 type Platform = "web" | "mobile" | "desktop";
 
@@ -67,7 +67,11 @@ const LOCATOR_TYPE_OPTIONS: Record<Platform, { label: string; value: string; key
     { label: "Custom…", value: "custom", keywords: "custom free text" },
   ],
   desktop: [
+    { label: "id", value: "id"},
     { label: "xpath", value: "xpath" },
+    { label: "accessibilityId", value: "accessibilityId"},
+    { label: "iOSClassChain", value: "iOSClassChain"},
+    { label: "iOSNsPredicateString", value: "iOSNsPredicateString"},
     { label: "automationId", value: "automationId", keywords: "windows automation id" },
     { label: "name", value: "name" },
     { label: "className", value: "className" },
@@ -403,7 +407,8 @@ export default function CreateTestCaseForm() {
                       </div>
 
                       {/* locator */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {actionRequiresLocator(targetPlatform, s.action) && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="space-y-1">
                           <div className="text-xs text-muted-foreground">locator.type</div>
                           <Combobox
@@ -441,6 +446,7 @@ export default function CreateTestCaseForm() {
                           />
                         </div>
                       </div>
+                      )}
 
                       {/* params (only if schema exists) */}
                       {paramSchema ? (
