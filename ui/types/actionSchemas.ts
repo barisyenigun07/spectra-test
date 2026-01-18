@@ -7,7 +7,7 @@ const NO_PARAMS = (title: string): SchemaDef => ({ title, fields: [] });
 const NO_LOCATOR_ACTIONS: Record<Platform, Set<string>> = {
   web: new Set(["openUrl", "navigateBack", "navigateFront"]),
   mobile: new Set(["swipe", "navigateBack", "navigateFront"]),
-  desktop: new Set([""])
+  desktop: new Set(["moveMouseByOffset", "moveMouseToLocation", "sendShortcut"])
 }
 
 export function actionRequiresLocator(platform: Platform, action: string) {
