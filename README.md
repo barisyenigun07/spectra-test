@@ -68,6 +68,40 @@ Communication between the control service and agents is asynchronous and message
 
 ---
 
+## 📁 Repository Structure
+
+The repository is organized to reflect the control–agent architecture of SpectraTest:
+
+```text
+spectra-test/
+├── control/
+│   ├── src/main/java
+│   ├── src/main/resources
+│   └── pom.xml
+│
+├── web-test-agent/
+│   ├── src/main/java
+│   ├── src/main/resources
+│   └── pom.xml
+│
+├── mobile-test-agent/
+│   ├── src/main/java
+│   ├── src/main/resources
+│   └── pom.xml
+│
+├── desktop-test-agent/
+│   ├── src/main/java
+│   ├── src/main/resources
+│   └── pom.xml
+│
+├── commons/
+│   ├── src/main/java
+│   └── pom.xml
+│
+└── README.md
+```
+---
+
 ## 🔄 Example Execution Flow
 
 Below is a simplified execution flow illustrating how a UI test scenario is executed within SpectraTest:
