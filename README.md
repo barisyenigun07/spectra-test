@@ -68,6 +68,29 @@ Communication between the control service and agents is asynchronous and message
 
 ---
 
+## 🔄 Example Execution Flow
+
+Below is a simplified execution flow illustrating how a UI test scenario is executed within SpectraTest:
+
+1. **Test Trigger (Control Service)**
+   - The control service receives a test execution request (e.g., via API or predefined configuration).
+   - The test definition includes the sequence of UI actions and target platform information.
+
+2. **Message Dispatch (RabbitMQ)**
+   - The control service publishes execution commands to RabbitMQ.
+   - Messages contain action details such as locator type, locator value, and action parameters.
+
+3. **Agent Execution (Agent Service)**
+   - A suitable Spring Boot–based agent service consumes the message from the queue.
+   - The agent performs the requested UI interaction using:
+     - Selenium (for web applications), or
+     - Appium (for mobile applications).
+   - Execution results are processed locally by the agent.
+
+This message-driven flow enables loose coupling between the control service and agent services, allowing multiple agents to operate independently and scale horizontally.
+
+---
+
 ## 📌 Public Version Scope
 
 This repository represents the **core, public-facing version** of SpectraTest and focuses on:
