@@ -27,12 +27,14 @@ SpectraTest follows a **control–agent architecture**:
   - Manages test lifecycle and coordination
   - Communicates with agents via **RabbitMQ**
 
-- **Agent Services**
-  - Execute UI automation tasks
-  - Interact with applications under test
-  - Currently utilize:
-    - **Selenium** for web automation
-    - **Appium** for mobile automation
+- **Test Automation Agents**
+  - Implemented as independent Spring Boot services
+  - Execute UI interactions based on received instructions
+  - Perform locator-based actions such as click, input, and validation
+  - Utilize:
+    - Selenium for web automation
+    - Appium for mobile automation
+    - Appium and LDTP for desktop automation
 
 Communication between the control service and agents is asynchronous and message-driven.
 
@@ -57,9 +59,10 @@ Communication between the control service and agents is asynchronous and message
 
 ## 🛠 Tech Stack
 
-- **Backend:** Java, Spring Boot
+- **Backend:** Java, Spring Boot (Control and Agent Services)
+- **Frontend** TypeScript, Next.js
 - **Messaging:** RabbitMQ
-- **Automation:** Selenium, Appium
+- **Automation:** Selenium, Appium, LDTP
 - **Build Tool:** Maven
 - **Version Control:** Git
 
