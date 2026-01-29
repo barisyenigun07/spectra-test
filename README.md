@@ -1,6 +1,6 @@
 # SpectraTest
 
-SpectraTest is a no-code UI test automation platform designed to execute automated UI tests across web and desktop applications using a distributed control–agent architecture.
+SpectraTest is a no-code UI test automation platform designed to execute automated UI tests across web, mobile and desktop applications using a distributed control–agent architecture.
 
 This public repository showcases the core backend orchestration and locator-based automation workflow of the SpectraTest platform.
 
