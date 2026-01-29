@@ -60,7 +60,7 @@ Communication between the control service and agents is asynchronous and message
 ## 🛠 Tech Stack
 
 - **Backend:** Java, Spring Boot (Control and Agent Services)
-- **Frontend** TypeScript, Next.js
+- **Frontend:** TypeScript, Next.js
 - **Messaging:** RabbitMQ
 - **Automation:** Selenium, Appium, LDTP
 - **Build Tool:** Maven
